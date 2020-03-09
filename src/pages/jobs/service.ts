@@ -1,14 +1,14 @@
 import request from '@/utils/request';
 import { TableListParams, TableListItem } from './data.d';
 
-export async function queryRule(params?: TableListParams) {
-  return request('/api/rule', {
+export async function queryJobs(params?: TableListParams) {
+  return request('/api/jobs', {
     params,
   });
 }
 
-export async function removeRule(params: { key: number[] }) {
-  return request('/api/rule', {
+export async function removeJob(params: { key: number[] }) {
+  return request('/api/jobs', {
     method: 'POST',
     data: {
       ...params,
@@ -17,8 +17,8 @@ export async function removeRule(params: { key: number[] }) {
   });
 }
 
-export async function addRule(params: TableListItem) {
-  return request('/api/rule', {
+export async function addJob(params: TableListItem) {
+  return request('/api/jobs', {
     method: 'POST',
     data: {
       ...params,
@@ -27,8 +27,8 @@ export async function addRule(params: TableListItem) {
   });
 }
 
-export async function updateRule(params: TableListParams) {
-  return request('/api/rule', {
+export async function updateJob(params: TableListParams) {
+  return request('/api/jobs', {
     method: 'POST',
     data: {
       ...params,

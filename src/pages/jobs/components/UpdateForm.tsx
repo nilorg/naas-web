@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { Button, DatePicker, Input, Modal, Radio, Select, Steps } from 'antd';
+import { Button, DatePicker, Input, Modal, Radio, Select, Steps, Form } from 'antd';
 
 import { TableListItem } from '../data.d';
 

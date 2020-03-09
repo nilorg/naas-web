@@ -8,7 +8,7 @@ import { SorterResult } from 'antd/es/table/interface';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { TableListItem } from './data.d';
-import { queryRule, updateRule, addRule, removeRule } from './service';
+import { queryJobs, updateJob, addJob, removeJob } from './service';
 
 /**
  * 添加节点
@@ -17,7 +17,7 @@ import { queryRule, updateRule, addRule, removeRule } from './service';
 const handleAdd = async (fields: TableListItem) => {
   const hide = message.loading('正在添加');
   try {
-    await addRule({ ...fields });
+    await addJob({ ...fields });
     hide();
     message.success('添加成功');
     return true;
@@ -35,7 +35,7 @@ const handleAdd = async (fields: TableListItem) => {
 const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在配置');
   try {
-    await updateRule({
+    await updateJob({
       name: fields.name,
       desc: fields.desc,
       key: fields.key,
@@ -59,7 +59,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    await removeRule({
+    await removeJob({
       key: selectedRows.map(row => row.key),
     });
     hide();
@@ -80,12 +80,12 @@ const TableList: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: '规则名称',
+      title: '任务名称',
       dataIndex: 'name',
       rules: [
         {
           required: true,
-          message: '规则名称为必填项',
+          message: '任务名称为必填项',
         },
       ],
     },
@@ -95,10 +95,11 @@ const TableList: React.FC<{}> = () => {
       valueType: 'textarea',
     },
     {
-      title: '服务调用次数',
+      title: '任务调用次数',
       dataIndex: 'callNo',
       sorter: true,
       hideInForm: true,
+      hideInSearch: true,
       renderText: (val: string) => `${val} 万`,
     },
     {
@@ -116,7 +117,7 @@ const TableList: React.FC<{}> = () => {
       title: '上次调度时间',
       dataIndex: 'updatedAt',
       sorter: true,
-      valueType: 'dateTime',
+      valueType: 'dateTimeRange',
       hideInForm: true,
     },
     {
@@ -143,7 +144,6 @@ const TableList: React.FC<{}> = () => {
   return (
     <PageHeaderWrapper>
       <ProTable<TableListItem>
-        headerTitle="查询表格"
         actionRef={actionRef}
         rowKey="key"
         onChange={(_, _filter, _sorter) => {
@@ -182,17 +182,11 @@ const TableList: React.FC<{}> = () => {
             </Dropdown>
           ),
         ]}
-        tableAlertRender={(selectedRowKeys, selectedRows) => (
-          <div>
-            已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-            <span>
-              服务调用次数总计 {selectedRows.reduce((pre, item) => pre + item.callNo, 0)} 万
-            </span>
-          </div>
-        )}
-        request={params => queryRule(params)}
+        tableAlertRender={() => false}
+        request={params => queryJobs(params)}
         columns={columns}
         rowSelection={{}}
+        options={{ fullScreen: false, reload: false, setting: false, density: false }}
       />
       <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
         <ProTable<TableListItem, TableListItem>
