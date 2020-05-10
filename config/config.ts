@@ -90,6 +90,12 @@ export default defineConfig({
               component: './ListTableList',
             },
             {
+              name: 'list.table-list',
+              icon: 'table',
+              path: '/jobs',
+              component: './jobs/index',
+            },
+            {
               component: './404',
             },
           ],
