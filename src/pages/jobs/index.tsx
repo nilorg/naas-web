@@ -82,16 +82,10 @@ const TableList: React.FC<{}> = () => {
     {
       title: '任务名称',
       dataIndex: 'name',
-      rules: [
-        {
-          required: true,
-          message: '任务名称为必填项',
-        },
-      ],
     },
     {
       title: '描述',
-      dataIndex: 'desc',
+      dataIndex: 'description',
       valueType: 'textarea',
     },
     {
@@ -106,6 +100,7 @@ const TableList: React.FC<{}> = () => {
       title: '状态',
       dataIndex: 'status',
       hideInForm: true,
+      hideInSearch: true,
       valueEnum: {
         0: { text: '关闭', status: 'Default' },
         1: { text: '运行中', status: 'Processing' },
@@ -114,11 +109,20 @@ const TableList: React.FC<{}> = () => {
       },
     },
     {
+      title: '调度表达式',
+      dataIndex: 'cron_expr',
+      sorter: true,
+      valueType: 'textarea',
+      hideInForm: true,
+      hideInSearch: true,
+    },
+    {
       title: '上次调度时间',
       dataIndex: 'updatedAt',
       sorter: true,
       valueType: 'dateTimeRange',
       hideInForm: true,
+      hideInSearch: true,
     },
     {
       title: '操作',
@@ -145,7 +149,7 @@ const TableList: React.FC<{}> = () => {
     <PageHeaderWrapper>
       <ProTable<TableListItem>
         actionRef={actionRef}
-        rowKey="key"
+        rowKey="name"
         onChange={(_, _filter, _sorter) => {
           const sorterResult = _sorter as SorterResult<TableListItem>;
           if (sorterResult.field) {
