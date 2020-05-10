@@ -18,7 +18,7 @@ export async function removeJob(params: { key: number[] }) {
 }
 
 export async function addJob(params: TableListItem) {
-  return request('/api/jobs', {
+  return request('/jobs', {
     method: 'POST',
     data: {
       ...params,
@@ -28,7 +28,7 @@ export async function addJob(params: TableListItem) {
 }
 
 export async function updateJob(params: TableListParams) {
-  return request('/api/jobs', {
+  return request('/jobs', {
     method: 'POST',
     data: {
       ...params,

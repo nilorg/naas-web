@@ -55,7 +55,7 @@ export default {
   menu: {
     locale: true,
   },
-  title: 'Ant Design Pro',
+  title: '我惠淘任务调度系统',
   pwa: false,
   iconfontUrl: '',
 } as DefaultSettings;

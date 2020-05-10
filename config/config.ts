@@ -11,13 +11,7 @@ export default defineConfig({
   dva: {
     hmr: true,
   },
-  locale: {
-    // default zh-CN
-    default: 'zh-CN',
-    // default true, when it is true, will use `navigator.language` overwrite default
-    antd: true,
-    baseNavigator: true,
-  },
+  locale: false,
   dynamicImport: {
     loading: '@/components/PageLoading/index',
   },
@@ -26,17 +20,6 @@ export default defineConfig({
   },
   // umi routes: https://umijs.org/docs/routing
   routes: [
-    // {
-    //   path: '/user',
-    //   component: '../layouts/UserLayout',
-    //   routes: [
-    //     {
-    //       name: 'login',
-    //       path: '/user/login',
-    //       component: './user/login',
-    //     },
-    //   ],
-    // },
     {
       path: '/auth',
       component: '../layouts/AuthLayout',
@@ -84,13 +67,7 @@ export default defineConfig({
               ],
             },
             {
-              name: 'list.table-list',
-              icon: 'table',
-              path: '/list',
-              component: './ListTableList',
-            },
-            {
-              name: 'list.table-list',
+              name: '任务',
               icon: 'table',
               path: '/jobs',
               component: './jobs/index',
