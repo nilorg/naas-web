@@ -1,9 +1,10 @@
 import { stringify } from 'querystring';
-import { history, Reducer, Effect } from 'umi';
+import { history, Effect, Reducer } from 'umi';
 
-import { fakeAccountLogin } from '@/services/login';
+import { authCode } from '@/services/auth';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
+import { setToken, removeToken } from '@/utils/token';
 
 export interface StateType {
   status?: 'ok' | 'error';
@@ -11,7 +12,7 @@ export interface StateType {
   currentAuthority?: 'user' | 'guest' | 'admin';
 }
 
-export interface LoginModelType {
+export interface AuthModelType {
   namespace: string;
   state: StateType;
   effects: {
@@ -23,8 +24,8 @@ export interface LoginModelType {
   };
 }
 
-const Model: LoginModelType = {
-  namespace: 'login',
+const Model: AuthModelType = {
+  namespace: 'auth',
 
   state: {
     status: undefined,
@@ -32,13 +33,12 @@ const Model: LoginModelType = {
 
   effects: {
     *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
+      const response = yield call(authCode, payload);
       yield put({
         type: 'changeLoginStatus',
         payload: response,
       });
-      // Login successfully
-      if (response.status === 'ok') {
+      if (response && response.status === 'ok') {
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params as { redirect: string };
@@ -57,14 +57,15 @@ const Model: LoginModelType = {
         history.replace(redirect || '/');
       }
     },
-
     logout() {
       const { redirect } = getPageQuery();
       // Note: There may be security issues, please note
-      if (window.location.pathname !== '/user/login' && !redirect) {
+      if (window.location.pathname !== '/auth/callback' && !redirect) {
+        removeToken();
         history.replace({
-          pathname: '/user/login',
+          pathname: '/auth/callback',
           search: stringify({
+            error: 'logout',
             redirect: window.location.href,
           }),
         });
@@ -74,11 +75,21 @@ const Model: LoginModelType = {
 
   reducers: {
     changeLoginStatus(state, { payload }) {
-      setAuthority(payload.currentAuthority);
+      if (payload) {
+        if (payload.status === 'ok') {
+          setAuthority(payload.currentAuthority);
+          setToken(payload.data);
+        }
+        console.log('result:', payload);
+        return {
+          ...state,
+          // status: payload.status,
+          status: 'error',
+        };
+      }
+      console.log('result22222222:', state);
       return {
         ...state,
-        status: payload.status,
-        type: payload.type,
       };
     },
   },

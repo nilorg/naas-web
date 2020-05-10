@@ -1,3 +1,4 @@
+// import { OAUTH2_SERVER } from '../src/utils/constants';
 /**
  * 在生产环境 代理是无法生效的，所以这里没有生产环境的配置
  * The agent cannot take effect in the production environment
@@ -7,10 +8,28 @@
  */
 export default {
   dev: {
-    '/api/': {
-      target: 'https://preview.pro.ant.design',
+    '/gateway/': {
+      target: 'http://localhost:4000/api/v1',
       changeOrigin: true,
-      pathRewrite: { '^': '' },
+      pathRewrite: {
+        '^/gateway/': '',
+      },
+    },
+    '/api/auth/': {
+      target: 'http://crontab-naas-token-server:8081',
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api/': '',
+      },
+      secure: false,
+    },
+    '/api/': {
+      target: 'http://crontab:8080/v1',
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api/': '',
+      },
+      secure: false,
     },
   },
   test: {

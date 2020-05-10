@@ -55,3 +55,12 @@ npm test
 ## More
 
 You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).
+
+```bash
+# 覆盖
+telepresence --namespace wohuitao --swap-deployment crontab-web --expose 8000 \
+--run yarn start:dev --port=8000
+# 创建新的
+telepresence --namespace wohuitao --new-deployment crontab-web --expose 8000 \
+--run yarn start:dev --port=8000
+```

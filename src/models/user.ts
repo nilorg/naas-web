@@ -3,17 +3,20 @@ import { Effect, Reducer } from 'umi';
 import { queryCurrent, query as queryUsers } from '@/services/user';
 
 export interface CurrentUser {
+  userid?: string;
   avatar?: string;
   name?: string;
-  title?: string;
-  group?: string;
-  signature?: string;
-  tags?: {
-    key: string;
-    label: string;
-  }[];
-  userid?: string;
-  unreadCount?: number;
+  // avatar?: string;
+  // name?: string;
+  // title?: string;
+  // group?: string;
+  // signature?: string;
+  // tags?: {
+  //   key: string;
+  //   label: string;
+  // }[];
+  // userid?: string;
+  // unreadCount?: number;
 }
 
 export interface UserModelState {
@@ -58,10 +61,22 @@ const UserModel: UserModelType = {
   },
 
   reducers: {
-    saveCurrentUser(state, action) {
+    saveCurrentUser(state, { payload }) {
+      const { userDetail } = payload;
+      if (userDetail) {
+        return {
+          ...state,
+          currentUser:
+            {
+              userid: userDetail.id,
+              avatar:
+                'https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2471723103,4261647594&fm=26&gp=0.jpg',
+              name: userDetail.username,
+            } || {},
+        };
+      }
       return {
         ...state,
-        currentUser: action.payload || {},
       };
     },
     changeNotifyCount(

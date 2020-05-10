@@ -1,9 +1,10 @@
 import React from 'react';
 import { PageLoading } from '@ant-design/pro-layout';
-import { Redirect, connect, ConnectProps } from 'umi';
+import { connect, ConnectProps } from 'umi';
 import { stringify } from 'querystring';
 import { ConnectState } from '@/models/connect';
 import { CurrentUser } from '@/models/user';
+import { OAUTH2_CALLBACK, OAUTH2_CLIENT_ID, OAUTH2_SERVER } from '@/utils/constants';
 
 interface SecurityLayoutProps extends ConnectProps {
   loading?: boolean;
@@ -44,8 +45,13 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
     if ((!isLogin && loading) || !isReady) {
       return <PageLoading />;
     }
-    if (!isLogin && window.location.pathname !== '/user/login') {
-      return <Redirect to={`/user/login?${queryString}`} />;
+    if (!isLogin && window.location.pathname !== '/auth/callback') {
+      const redirectURI = `${OAUTH2_CALLBACK}?${queryString}`;
+      const OAUTH2_LOGIN = `${OAUTH2_SERVER}/oauth2/authorize?client_id=${OAUTH2_CLIENT_ID}&redirect_uri=${encodeURI(
+        redirectURI,
+      )}&response_type=code&state=somestate&scope=read_write`;
+      window.location.href = OAUTH2_LOGIN;
+      return null;
     }
     return children;
   }

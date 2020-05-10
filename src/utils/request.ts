@@ -4,6 +4,7 @@
  */
 import { extend } from 'umi-request';
 import { notification } from 'antd';
+import { getToken } from './token';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -44,13 +45,114 @@ const errorHandler = (error: { response: Response }): Response => {
   }
   return response;
 };
+// 前缀匹配
+const whiteUrl = ['/auth/token'];
+const requestHandler = (url: any, options: any) => {
+  const token = getToken();
+  if (whiteUrl.findIndex((i) => url.startsWith(i)) === -1 && token) {
+    const headers = {
+      ...options.headers,
+      Authorization: `Bearer ${token.access_token}`,
+    };
+    return {
+      url,
+      options: { ...options, headers },
+    };
+  }
+  return {
+    url,
+    options,
+  };
+};
+/**
+ * 配置gatewayRequest请求时的默认参数
+ */
+const gatewayRequest = extend({
+  errorHandler, // 默认错误处理
+  credentials: 'include', // 默认请求是否带上cookie
+  prefix: '/gateway',
+  headers: {
+    'X-NilorgApiGateway-Client': 'Nilorg-Crontab-Web',
+    'X-NilorgApiGateway-ClientVersion': 'v1',
+  },
+});
+gatewayRequest.interceptors.request.use(requestHandler);
+export { gatewayRequest };
 
+// /**
+//  * 配置oauth2Request请求时的默认参数
+//  */
+// const oauth2Request = extend({
+//   errorHandler, // 默认错误处理
+//   credentials: 'include', // 默认请求是否带上cookie
+//   prefix: '/oauth2',
+// });
+// oauth2Request.interceptors.request.use(requestHandler);
+// export { oauth2Request };
 /**
  * 配置request请求时的默认参数
  */
 const request = extend({
   errorHandler, // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
+  prefix: '/api',
 });
+request.interceptors.request.use(requestHandler);
+
+// let retryCount = 0;
+// async function retryRequest(response: Response, options: RequestOptionsInit) {
+//   retryCount += 1;
+//   const oldToken = getToken();
+//   if (oldToken && retryCount <= 3) {
+//     // TODO: 接口开发完毕后对接
+//     const newToken = await request.get(`/web/token/refresh/${oldToken.refresh_token}`);
+//     if (newToken) {
+//       setToken(newToken.data);
+//       retryCount = 0;
+//       // 设置Token成功后，重新执行请求
+//       return request(response.url, { ...options, prefix: undefined, params: undefined });
+//     }
+//   }
+//   // 获取原来Token失败
+//   notification.error({
+//     description: '您的Token发生异常，无法找到Token',
+//     message: 'Token错误',
+//   });
+//   retryCount = 0;
+//   // 获取Token失败，去登录页面
+//   window.location.href = '/user/login';
+//   return response;
+// }
+
+// // response拦截器, 处理response
+// request.interceptors.response.use(async (response, options) => {
+//   // const { status } = response;
+//   // if (status === 401) {
+//   //   return retryRequest(response, options);
+//   // }
+//   // 克隆响应对象做解析处理
+//   const data = await response.clone().json();
+//   // 认证失败
+//   // if (data.code === 1000) {
+//   //   return retryRequest(response, options);
+//   // }
+//   // 刷新Token失败
+//   if (data.code === 1005) {
+//     window.location.href = '/user/login';
+//     return response;
+//   }
+//   if (data.code === 2000) {
+//     notification.error({
+//       description: '您的权限不足，无法执行操作',
+//       message: '权限错误',
+//     });
+//   } else if (data.code === 9000) {
+//     notification.error({
+//       description: '系统发生异常，请稍候重试',
+//       message: '系统错误',
+//     });
+//   }
+//   return response;
+// });
 
 export default request;

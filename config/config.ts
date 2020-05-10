@@ -26,14 +26,25 @@ export default defineConfig({
   },
   // umi routes: https://umijs.org/docs/routing
   routes: [
+    // {
+    //   path: '/user',
+    //   component: '../layouts/UserLayout',
+    //   routes: [
+    //     {
+    //       name: 'login',
+    //       path: '/user/login',
+    //       component: './user/login',
+    //     },
+    //   ],
+    // },
     {
-      path: '/user',
-      component: '../layouts/UserLayout',
+      path: '/auth',
+      component: '../layouts/AuthLayout',
       routes: [
         {
-          name: 'login',
-          path: '/user/login',
-          component: './user/login',
+          name: '授权回调',
+          path: '/auth/callback',
+          component: './auth/callback',
         },
       ],
     },
