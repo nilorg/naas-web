@@ -38,7 +38,7 @@ const handleUpdate = async (fields: FormValueType) => {
     await updateJob({
       name: fields.name,
       desc: fields.desc,
-      key: fields.key,
+      id: fields.id,
     });
     hide();
 
@@ -60,7 +60,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   if (!selectedRows) return true;
   try {
     await removeJob({
-      key: selectedRows.map((row) => row.key),
+      ids: selectedRows.map((row) => row.id),
     });
     hide();
     message.success('删除成功，即将刷新');
@@ -139,7 +139,7 @@ const TableList: React.FC<{}> = () => {
             配置
           </a>
           <Divider type="vertical" />
-          <a href="">订阅警报</a>
+          <a href="">执行日志</a>
         </>
       ),
     },
@@ -149,7 +149,7 @@ const TableList: React.FC<{}> = () => {
     <PageHeaderWrapper>
       <ProTable<TableListItem>
         actionRef={actionRef}
-        rowKey="name"
+        rowKey="id"
         onChange={(_, _filter, _sorter) => {
           const sorterResult = _sorter as SorterResult<TableListItem>;
           if (sorterResult.field) {
@@ -203,7 +203,7 @@ const TableList: React.FC<{}> = () => {
               }
             }
           }}
-          rowKey="key"
+          rowKey="id"
           type="form"
           columns={columns}
           rowSelection={{}}

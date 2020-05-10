@@ -1,5 +1,5 @@
 export interface TableListItem {
-  key: number;
+  id: string;
   name: string;
   desc: string;
   sync: boolean;
@@ -25,7 +25,7 @@ export interface TableListParams {
   status?: string;
   name?: string;
   desc?: string;
-  key?: number;
+  id?: string;
   pageSize?: number;
   currentPage?: number;
 }

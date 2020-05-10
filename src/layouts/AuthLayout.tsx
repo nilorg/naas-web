@@ -43,7 +43,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = (props) => {
           style={{
             backgroundColor: 'transparent',
           }}
-          copyright="2020 升云殡葬协会管理系统"
+          copyright="2020 德意洋洋"
           links={[]}
         />
       </div>

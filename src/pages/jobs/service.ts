@@ -9,7 +9,7 @@ export async function queryJobs(params?: TableListParams) {
   return response.toTataResult(result, (i) => i);
 }
 
-export async function removeJob(params: { key: number[] }) {
+export async function removeJob(params: { ids: string[] }) {
   return request('/jobs', {
     method: 'POST',
     data: {

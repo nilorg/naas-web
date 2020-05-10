@@ -10,7 +10,7 @@ export interface TokenData {
   scope: string;
 }
 const TOKEN_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
-const TOKEN_KEY = 'union-token';
+const TOKEN_KEY = 'nilorg-crontab-token';
 // 设置Token
 export function setToken(token: any): void {
   const saveToken: TokenData = {
