@@ -62,16 +62,15 @@ const UserModel: UserModelType = {
 
   reducers: {
     saveCurrentUser(state, { payload }) {
-      const { userDetail } = payload;
-      if (userDetail) {
+      const { err } = payload;
+      if (!err) {
         return {
           ...state,
           currentUser:
             {
-              userid: userDetail.id,
-              avatar:
-                'https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2471723103,4261647594&fm=26&gp=0.jpg',
-              name: userDetail.username,
+              userid: payload.user.id,
+              avatar: payload.user_info.avatar_url,
+              name: payload.user_info.nick_name,
             } || {},
         };
       }
