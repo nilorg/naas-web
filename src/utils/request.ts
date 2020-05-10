@@ -65,31 +65,6 @@ const requestHandler = (url: any, options: any) => {
   };
 };
 /**
- * 配置gatewayRequest请求时的默认参数
- */
-const gatewayRequest = extend({
-  errorHandler, // 默认错误处理
-  credentials: 'include', // 默认请求是否带上cookie
-  prefix: '/gateway',
-  headers: {
-    'X-NilorgApiGateway-Client': 'Nilorg-Crontab-Web',
-    'X-NilorgApiGateway-ClientVersion': 'v1',
-  },
-});
-gatewayRequest.interceptors.request.use(requestHandler);
-export { gatewayRequest };
-
-// /**
-//  * 配置oauth2Request请求时的默认参数
-//  */
-// const oauth2Request = extend({
-//   errorHandler, // 默认错误处理
-//   credentials: 'include', // 默认请求是否带上cookie
-//   prefix: '/oauth2',
-// });
-// oauth2Request.interceptors.request.use(requestHandler);
-// export { oauth2Request };
-/**
  * 配置request请求时的默认参数
  */
 const request = extend({

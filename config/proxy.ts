@@ -8,13 +8,6 @@
  */
 export default {
   dev: {
-    '/gateway/': {
-      target: 'http://localhost:4000/api/v1',
-      changeOrigin: true,
-      pathRewrite: {
-        '^/gateway/': '',
-      },
-    },
     '/api/auth/': {
       target: 'http://crontab-naas-token-server:8081',
       changeOrigin: true,

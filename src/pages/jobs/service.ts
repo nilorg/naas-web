@@ -2,13 +2,13 @@ import request from '@/utils/request';
 import { TableListParams, TableListItem } from './data.d';
 
 export async function queryJobs(params?: TableListParams) {
-  return request('/api/jobs', {
+  return request('/jobs', {
     params,
   });
 }
 
 export async function removeJob(params: { key: number[] }) {
-  return request('/api/jobs', {
+  return request('/jobs', {
     method: 'POST',
     data: {
       ...params,
