@@ -42,13 +42,13 @@ export default defineConfig({
           routes: [
             {
               path: '/',
-              redirect: '/welcome',
+              redirect: '/dashboard',
             },
             {
-              path: '/welcome',
-              name: 'welcome',
-              icon: 'smile',
-              component: './Welcome',
+              path: '/dashboard',
+              name: 'Dashboard',
+              icon: 'DashboardOutlined',
+              component: './Dashboard',
             },
             {
               path: '/admin',
@@ -61,10 +61,16 @@ export default defineConfig({
                   path: '/admin/sub-page',
                   name: 'sub-page',
                   icon: 'smile',
-                  component: './Welcome',
+                  component: './Dashboard',
                   authority: ['admin'],
                 },
               ],
+            },
+            {
+              name: '表达式',
+              icon: 'table',
+              path: '/cron_expressions',
+              component: './cronExpression/index',
             },
             {
               name: '任务',

@@ -11,12 +11,8 @@ export async function queryJobs(params?: TableListParams) {
 }
 
 export async function removeJob(params: { ids: string[] }) {
-  return request('/jobs', {
-    method: 'POST',
-    data: {
-      ...params,
-      method: 'delete',
-    },
+  return request(`/jobs/${params.ids.join(',')}`, {
+    method: 'DELETE',
   });
 }
 

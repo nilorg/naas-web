@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, DatePicker, Input, Modal, Radio, Select, Steps, Form } from 'antd';
+import { Button, Input, Modal, Radio, Select, Steps, Form } from 'antd';
 
 export interface FormValueType {
   id?: string;
@@ -37,6 +37,10 @@ const EditForm: React.FC<EditFormProps> = (props) => {
   const [formVals, setFormVals] = useState<FormValueType>({
     sync: 1,
     type: '0',
+    detail: {
+      arg: '-c',
+      interpreter: '/bin/bash',
+    },
   });
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [type, setType] = useState<string>('0');
@@ -56,7 +60,6 @@ const EditForm: React.FC<EditFormProps> = (props) => {
 
   const handleNext = async () => {
     const fieldsValue = await form.validateFields();
-    console.log(fieldsValue);
     setFormVals({ ...formVals, ...fieldsValue });
 
     if (currentStep < 2) {
@@ -87,20 +90,36 @@ const EditForm: React.FC<EditFormProps> = (props) => {
           </FormItem>
           {type === '0' ? (
             <>
-              <FormItem name={['detail', 'arg']} label="参数">
-                <Input defaultValue="-c" />
+              <FormItem
+                name={['detail', 'arg']}
+                label="参数"
+                rules={[{ required: true, message: '请输入参数' }]}
+              >
+                <Input />
               </FormItem>
-              <FormItem name={['detail', 'interpreter']} label="解析器">
-                <Input defaultValue="/bin/bash" />
+              <FormItem
+                name={['detail', 'interpreter']}
+                label="解析器"
+                rules={[{ required: true, message: '请输入解析器' }]}
+              >
+                <Input />
               </FormItem>
-              <FormItem name={['detail', 'command']} label="脚本">
+              <FormItem
+                name={['detail', 'command']}
+                label="脚本"
+                rules={[{ required: true, message: '请输入脚本' }]}
+              >
                 <Input.TextArea />
               </FormItem>
             </>
           ) : null}
           {type === '1' || type === '2' ? (
             <>
-              <FormItem name={['detail', 'method']} label="请求方法">
+              <FormItem
+                name={['detail', 'method']}
+                label="请求方法"
+                rules={[{ required: true, message: '请选择请求方法' }]}
+              >
                 <Select style={{ width: '100%' }}>
                   <Option value="GET">GET</Option>
                   <Option value="POST">POST</Option>
@@ -108,26 +127,50 @@ const EditForm: React.FC<EditFormProps> = (props) => {
                   <Option value="DELETE">DELETE</Option>
                 </Select>
               </FormItem>
-              <FormItem name={['detail', 'url']} label="URL">
+              <FormItem
+                name={['detail', 'url']}
+                label="URL"
+                rules={[{ required: true, message: '请输入URL' }]}
+              >
                 <Input />
               </FormItem>
-              <FormItem name={['detail', 'headers']} label="Headers">
+              <FormItem
+                name={['detail', 'headers']}
+                label="Headers"
+                rules={[{ required: true, message: '请输入请求头' }]}
+              >
                 <Input.TextArea />
               </FormItem>
-              <FormItem name={['detail', 'body']} label="Body">
+              <FormItem
+                name={['detail', 'body']}
+                label="Body"
+                rules={[{ required: false, message: '请输入请求附带的值' }]}
+              >
                 <Input.TextArea />
               </FormItem>
             </>
           ) : null}
           {type === '3' || type === '4' ? (
             <>
-              <FormItem name={['detail', 'address']} label="地址">
+              <FormItem
+                name={['detail', 'address']}
+                label="地址"
+                rules={[{ required: true, message: '请输入地址' }]}
+              >
                 <Input />
               </FormItem>
-              <FormItem name={['detail', 'task_id']} label="任务ID">
+              <FormItem
+                name={['detail', 'task_id']}
+                label="任务ID"
+                rules={[{ required: true, message: '请输入任务ID' }]}
+              >
                 <Input.TextArea />
               </FormItem>
-              <FormItem name={['detail', 'body']} label="Body">
+              <FormItem
+                name={['detail', 'body']}
+                label="Body"
+                rules={[{ required: false, message: '请输入请求任务附带的值' }]}
+              >
                 <Input.TextArea />
               </FormItem>
             </>
@@ -139,21 +182,12 @@ const EditForm: React.FC<EditFormProps> = (props) => {
       return (
         <>
           <FormItem
-            name="time"
-            label="开始时间"
-            rules={[{ required: true, message: '请选择开始时间！' }]}
+            name="cron_expr"
+            label="Cron表达式"
+            rules={[{ required: true, message: '请输入Cron表达式' }]}
           >
-            <DatePicker
-              style={{ width: '100%' }}
-              showTime
-              format="YYYY-MM-DD HH:mm:ss"
-              placeholder="选择开始时间"
-            />
-          </FormItem>
-          <FormItem name="frequency" label="调度周期">
-            <Select style={{ width: '100%' }}>
-              <Option value="month">月</Option>
-              <Option value="week">周</Option>
+            <Select>
+              <Select.Option value="*/10 * * * * *">每10s执行一次</Select.Option>
             </Select>
           </FormItem>
         </>
@@ -163,15 +197,15 @@ const EditForm: React.FC<EditFormProps> = (props) => {
       <>
         <FormItem
           name="name"
-          label="规则名称"
-          rules={[{ required: true, message: '请输入规则名称！' }]}
+          label="任务名称"
+          rules={[{ required: true, message: '请输入任务名称！' }]}
         >
           <Input placeholder="请输入" />
         </FormItem>
         <FormItem
           name="desc"
-          label="规则描述"
-          rules={[{ required: true, message: '请输入至少五个字符的规则描述！', min: 5 }]}
+          label="任务描述"
+          rules={[{ required: true, message: '请输入至少五个字符的任务描述！', min: 5 }]}
         >
           <TextArea rows={4} placeholder="请输入至少五个字符" />
         </FormItem>
@@ -221,7 +255,7 @@ const EditForm: React.FC<EditFormProps> = (props) => {
       width={640}
       bodyStyle={{ padding: '32px 40px 48px' }}
       destroyOnClose
-      title="规则配置"
+      title="任务配置"
       visible={updateModalVisible}
       footer={renderFooter()}
       onCancel={onCancel}
@@ -229,7 +263,7 @@ const EditForm: React.FC<EditFormProps> = (props) => {
     >
       <Steps style={{ marginBottom: 28 }} size="small" current={currentStep}>
         <Step title="基本信息" />
-        <Step title="配置规则属性" />
+        <Step title="配置任务属性" />
         <Step title="设定调度周期" />
       </Steps>
       <Form

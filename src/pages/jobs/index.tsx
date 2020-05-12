@@ -7,38 +7,26 @@ import { SorterResult } from 'antd/es/table/interface';
 
 import EditForm, { FormValueType } from './components/EditForm';
 import { TableListItem } from './data.d';
-import { queryJobs, updateJob, removeJob } from './service';
-
-// /**
-//  * 添加节点
-//  * @param fields
-//  */
-// const handleAdd = async (fields: TableListItem) => {
-//   const hide = message.loading('正在添加');
-//   try {
-//     await addJob({ ...fields });
-//     hide();
-//     message.success('添加成功');
-//     return true;
-//   } catch (error) {
-//     hide();
-//     message.error('添加失败请重试！');
-//     return false;
-//   }
-// };
+import { queryJobs, updateJob, removeJob, addJob } from './service';
 
 /**
  * 更新节点
  * @param fields
  */
-const handleUpdate = async (fields: FormValueType) => {
+const handleEdit = async (fields: FormValueType) => {
   const hide = message.loading('正在配置');
   try {
-    await updateJob({
-      name: fields.name,
-      desc: fields.desc,
-      id: fields.id,
-    });
+    if (fields.id) {
+      await updateJob({
+        ...fields,
+        sync: fields.sync === 1,
+      });
+    } else {
+      await addJob({
+        ...fields,
+        sync: fields.sync === 1,
+      });
+    }
     hide();
 
     message.success('配置成功');
@@ -174,7 +162,6 @@ const TableList: React.FC<{}> = () => {
                   selectedKeys={[]}
                 >
                   <Menu.Item key="remove">批量删除</Menu.Item>
-                  <Menu.Item key="approval">批量审批</Menu.Item>
                 </Menu>
               }
             >
@@ -192,7 +179,7 @@ const TableList: React.FC<{}> = () => {
       />
       <EditForm
         onSubmit={async (value) => {
-          const success = await handleUpdate(value);
+          const success = await handleEdit(value);
           if (success) {
             handleEditModalVisible(false);
             setEditId(undefined);
