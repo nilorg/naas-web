@@ -1,6 +1,7 @@
-import { DownOutlined, PlusOutlined, EditFilled, DeleteFilled } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message } from 'antd';
 import React, { useState, useRef } from 'react';
+import { history } from 'umi';
+import { Button, Divider, Dropdown, Menu, message } from 'antd';
+import { DownOutlined, PlusOutlined, EditFilled, DeleteFilled } from '@ant-design/icons';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import { SorterResult } from 'antd/es/table/interface';
@@ -109,7 +110,7 @@ const TableList: React.FC<{}> = () => {
       sorter: true,
       hideInForm: true,
       hideInSearch: true,
-      renderText: (val: number) => moment.unix(val).format("YYYY-MM-DD HH:mm:ss"),
+      renderText: (val: number) => moment.unix(val).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '操作',
@@ -126,7 +127,18 @@ const TableList: React.FC<{}> = () => {
             配置
           </a>
           <Divider type="vertical" />
-          <a href="">执行日志</a>
+          <a
+            onClick={() => {
+              history.push({
+                pathname: '/logs',
+                query: {
+                  job_id: record.id,
+                },
+              });
+            }}
+          >
+            执行日志
+          </a>
         </>
       ),
     },

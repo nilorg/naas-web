@@ -79,6 +79,12 @@ export default defineConfig({
               component: './jobs/index',
             },
             {
+              name: '任务日志',
+              icon: 'table',
+              path: '/logs',
+              component: './logs/index',
+            },
+            {
               component: './404',
             },
           ],

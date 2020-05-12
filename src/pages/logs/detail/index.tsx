@@ -3,7 +3,6 @@ import { Typography } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import styles from './index.less';
 
-
 const CodePreview: React.FC<{}> = ({ children }) => (
   <pre className={styles.pre}>
     <code>
@@ -13,12 +12,10 @@ const CodePreview: React.FC<{}> = ({ children }) => (
 );
 
 const Detail: React.FC<{}> = () => {
-  useEffect(() => {
-
-  }, []);
+  useEffect(() => {}, []);
   return (
     <PageHeaderWrapper>
-      <CodePreview >npm run ui</CodePreview>
+      <CodePreview>npm run ui</CodePreview>
     </PageHeaderWrapper>
   );
 };

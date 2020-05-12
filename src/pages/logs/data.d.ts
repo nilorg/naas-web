@@ -1,5 +1,7 @@
 export interface TableListItem {
   id: string;
+  job_id: string;
+  job: any;
   name: string;
   desc: string;
   sync: boolean;
@@ -7,7 +9,6 @@ export interface TableListItem {
   cron_expr: string;
   callNo: number;
   status: number;
-  log_id: string;
 }
 
 export interface TableListPagination {
@@ -22,11 +23,10 @@ export interface TableListData {
 }
 
 export interface TableListParams {
-  sorter?: string;
-  status?: string;
+  job_id?: string;
   name?: string;
-  desc?: string;
-  id?: string;
+  worker?: string;
+  sorter?: string;
   pageSize?: number;
   currentPage?: number;
 }
