@@ -10,6 +10,12 @@ export async function queryJobs(params?: TableListParams) {
   return response.toTataResult(result, (i) => i);
 }
 
+export async function getJob(params: { id: string }) {
+  return request(`/jobs/${params.id}`, {
+    method: 'GET',
+  });
+}
+
 export async function removeJob(params: { ids: string[] }) {
   return request(`/jobs/${params.ids.join(',')}`, {
     method: 'DELETE',
@@ -26,8 +32,8 @@ export async function addJob(params: FormValueType) {
 }
 
 export async function updateJob(params: FormValueType) {
-  return request('/jobs', {
-    method: 'POST',
+  return request(`/jobs/${params.id}`, {
+    method: 'PUT',
     data: {
       ...params,
     },

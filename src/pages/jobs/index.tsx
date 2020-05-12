@@ -1,4 +1,4 @@
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusOutlined, EditFilled, DeleteFilled } from '@ant-design/icons';
 import { Button, Divider, Dropdown, Menu, message } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
@@ -149,7 +149,7 @@ const TableList: React.FC<{}> = () => {
           <Button type="primary" onClick={() => handleEditModalVisible(true)}>
             <PlusOutlined /> 新建
           </Button>,
-          selectedRows && selectedRows.length > 0 && (
+          selectedRows && selectedRows.length > 1 && (
             <Dropdown
               overlay={
                 <Menu
@@ -169,6 +169,29 @@ const TableList: React.FC<{}> = () => {
                 批量操作 <DownOutlined />
               </Button>
             </Dropdown>
+          ),
+          selectedRows && selectedRows.length === 1 && (
+            <Button
+              type="default"
+              onClick={() => {
+                setEditId(selectedRows[0].id);
+                handleEditModalVisible(true);
+              }}
+            >
+              <EditFilled /> 编辑
+            </Button>
+          ),
+          selectedRows && selectedRows.length === 1 && (
+            <Button
+              type="primary"
+              danger
+              onClick={() => {
+                handleRemove(selectedRows);
+                action.reload();
+              }}
+            >
+              <DeleteFilled /> 删除
+            </Button>
           ),
         ]}
         tableAlertRender={() => false}

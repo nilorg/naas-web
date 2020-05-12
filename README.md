@@ -64,3 +64,8 @@ telepresence --namespace wohuitao --swap-deployment crontab-web --expose 8000 \
 telepresence --namespace wohuitao --new-deployment crontab-web --expose 8000 \
 --run yarn start:dev --port=8000
 ```
+
+```bash
+秒    分钟    小时    日    月    年
+*/10  *       *      *    *      *
+```

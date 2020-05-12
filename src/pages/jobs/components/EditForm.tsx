@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Modal, Radio, Select, Steps, Form } from 'antd';
+import { getJob } from '../service';
 
 export interface FormValueType {
   id?: string;
@@ -37,24 +38,30 @@ const EditForm: React.FC<EditFormProps> = (props) => {
   const { onSubmit, onCancel, updateModalVisible, id } = props;
   const [formVals, setFormVals] = useState<FormValueType>({});
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [type, setType] = useState<string>('0');
+  const [type, setType] = useState<string>('shell');
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (id) {
-      console.log('修改查询数据');
-    } else {
-      console.log('添加数据');
-      setFormVals({
+    if (id && updateModalVisible) {
+      setCurrentStep(0);
+      getJob({ id }).then((result) => {
+        form.setFieldsValue({
+          ...result,
+          sync: result.sync ? 1 : 0,
+        });
+      });
+    } else if (updateModalVisible) {
+      setCurrentStep(0);
+      form.setFieldsValue({
         sync: 1,
-        type: '0',
+        type: 'shell',
         detail: {
           arg: '-c',
           interpreter: '/bin/bash',
         },
       });
     }
-  }, [id]);
+  }, [id, updateModalVisible]);
 
   const forward = () => setCurrentStep(currentStep + 1);
 
@@ -67,7 +74,7 @@ const EditForm: React.FC<EditFormProps> = (props) => {
     if (currentStep < 2) {
       forward();
     } else {
-      onSubmit(newformVals);
+      onSubmit({ id, ...newformVals });
     }
   };
 
@@ -83,28 +90,28 @@ const EditForm: React.FC<EditFormProps> = (props) => {
           </FormItem>
           <FormItem name="type" label="任务类型">
             <Select onChange={(e: string) => setType(e)} style={{ width: '100%' }}>
-              <Option value="0">SHELL</Option>
-              <Option value="1">HTTP</Option>
-              <Option value="2">HTTPS</Option>
-              <Option value="3">gRpc</Option>
-              <Option value="4">GoRpc</Option>
+              <Option value="shell">SHELL</Option>
+              <Option value="http">HTTP</Option>
+              <Option value="https">HTTPS</Option>
+              <Option value="gorpc">GoRpc</Option>
+              <Option value="grpc">gRpc</Option>
             </Select>
           </FormItem>
-          {type === '0' ? (
+          {type === 'shell' ? (
             <>
               <FormItem
                 name={['detail', 'arg']}
                 label="参数"
                 rules={[{ required: true, message: '请输入参数' }]}
               >
-                <Input />
+                <Input placeholder="-c" />
               </FormItem>
               <FormItem
                 name={['detail', 'interpreter']}
                 label="解析器"
                 rules={[{ required: true, message: '请输入解析器' }]}
               >
-                <Input />
+                <Input placeholder="/bin/bash" />
               </FormItem>
               <FormItem
                 name={['detail', 'command']}
@@ -115,7 +122,7 @@ const EditForm: React.FC<EditFormProps> = (props) => {
               </FormItem>
             </>
           ) : null}
-          {type === '1' || type === '2' ? (
+          {type === 'http' || type === 'https' ? (
             <>
               <FormItem
                 name={['detail', 'method']}
@@ -134,14 +141,14 @@ const EditForm: React.FC<EditFormProps> = (props) => {
                 label="URL"
                 rules={[{ required: true, message: '请输入URL' }]}
               >
-                <Input />
+                <Input placeholder="http(s)://www.baidu.com" />
               </FormItem>
               <FormItem
                 name={['detail', 'headers']}
                 label="Headers"
                 rules={[{ required: true, message: '请输入请求头' }]}
               >
-                <Input.TextArea />
+                <Input.TextArea placeholder="Crontab-A:test" />
               </FormItem>
               <FormItem
                 name={['detail', 'body']}
@@ -152,14 +159,14 @@ const EditForm: React.FC<EditFormProps> = (props) => {
               </FormItem>
             </>
           ) : null}
-          {type === '3' || type === '4' ? (
+          {type === 'gorpc' || type === 'grpc' ? (
             <>
               <FormItem
                 name={['detail', 'address']}
                 label="地址"
                 rules={[{ required: true, message: '请输入地址' }]}
               >
-                <Input />
+                <Input placeholder="127.0.0.1:9000" />
               </FormItem>
               <FormItem
                 name={['detail', 'task_id']}
@@ -189,6 +196,8 @@ const EditForm: React.FC<EditFormProps> = (props) => {
             rules={[{ required: true, message: '请输入Cron表达式' }]}
           >
             <Select>
+              <Select.Option value="* * */1 * * *">每1小时执行一次</Select.Option>
+              <Select.Option value="* */1 * * * *">每1分钟执行一次</Select.Option>
               <Select.Option value="*/10 * * * * *">每10s执行一次</Select.Option>
             </Select>
           </FormItem>
@@ -268,17 +277,7 @@ const EditForm: React.FC<EditFormProps> = (props) => {
         <Step title="配置任务属性" />
         <Step title="设定调度周期" />
       </Steps>
-      <Form
-        {...formLayout}
-        form={form}
-        initialValues={{
-          name: formVals.name,
-          desc: formVals.desc,
-          sync: formVals.sync,
-          type: formVals.type,
-          detail: formVals.detail,
-        }}
-      >
+      <Form {...formLayout} form={form}>
         {renderContent()}
       </Form>
     </Modal>
