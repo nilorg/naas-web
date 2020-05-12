@@ -5,28 +5,27 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import { SorterResult } from 'antd/es/table/interface';
 
-import CreateForm from './components/CreateForm';
-import UpdateForm, { FormValueType } from './components/UpdateForm';
+import EditForm, { FormValueType } from './components/EditForm';
 import { TableListItem } from './data.d';
-import { queryJobs, updateJob, addJob, removeJob } from './service';
+import { queryJobs, updateJob, removeJob } from './service';
 
-/**
- * 添加节点
- * @param fields
- */
-const handleAdd = async (fields: TableListItem) => {
-  const hide = message.loading('正在添加');
-  try {
-    await addJob({ ...fields });
-    hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
+// /**
+//  * 添加节点
+//  * @param fields
+//  */
+// const handleAdd = async (fields: TableListItem) => {
+//   const hide = message.loading('正在添加');
+//   try {
+//     await addJob({ ...fields });
+//     hide();
+//     message.success('添加成功');
+//     return true;
+//   } catch (error) {
+//     hide();
+//     message.error('添加失败请重试！');
+//     return false;
+//   }
+// };
 
 /**
  * 更新节点
@@ -74,9 +73,8 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
 
 const TableList: React.FC<{}> = () => {
   const [sorter, setSorter] = useState<string>('');
-  const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
-  const [stepFormValues, setStepFormValues] = useState({});
+  const [editModalVisible, handleEditModalVisible] = useState<boolean>(false);
+  const [editId, setEditId] = useState<string>();
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<TableListItem>[] = [
     {
@@ -132,8 +130,8 @@ const TableList: React.FC<{}> = () => {
         <>
           <a
             onClick={() => {
-              handleUpdateModalVisible(true);
-              setStepFormValues(record);
+              handleEditModalVisible(true);
+              setEditId(record.id);
             }}
           >
             配置
@@ -160,7 +158,7 @@ const TableList: React.FC<{}> = () => {
           sorter,
         }}
         toolBarRender={(action, { selectedRows }) => [
-          <Button type="primary" onClick={() => handleModalVisible(true)}>
+          <Button type="primary" onClick={() => handleEditModalVisible(true)}>
             <PlusOutlined /> 新建
           </Button>,
           selectedRows && selectedRows.length > 0 && (
@@ -192,43 +190,24 @@ const TableList: React.FC<{}> = () => {
         rowSelection={{}}
         options={{ fullScreen: false, reload: false, setting: false, density: false }}
       />
-      <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
-        <ProTable<TableListItem, TableListItem>
-          onSubmit={async (value) => {
-            const success = await handleAdd(value);
-            if (success) {
-              handleModalVisible(false);
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
+      <EditForm
+        onSubmit={async (value) => {
+          const success = await handleUpdate(value);
+          if (success) {
+            handleEditModalVisible(false);
+            setEditId(undefined);
+            if (actionRef.current) {
+              actionRef.current.reload();
             }
-          }}
-          rowKey="id"
-          type="form"
-          columns={columns}
-          rowSelection={{}}
-        />
-      </CreateForm>
-      {stepFormValues && Object.keys(stepFormValues).length ? (
-        <UpdateForm
-          onSubmit={async (value) => {
-            const success = await handleUpdate(value);
-            if (success) {
-              handleModalVisible(false);
-              setStepFormValues({});
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
-            }
-          }}
-          onCancel={() => {
-            handleUpdateModalVisible(false);
-            setStepFormValues({});
-          }}
-          updateModalVisible={updateModalVisible}
-          values={stepFormValues}
-        />
-      ) : null}
+          }
+        }}
+        onCancel={() => {
+          handleEditModalVisible(false);
+          setEditId(undefined);
+        }}
+        updateModalVisible={editModalVisible}
+        id={editId}
+      />
     </PageHeaderWrapper>
   );
 };

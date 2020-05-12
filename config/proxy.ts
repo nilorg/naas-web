@@ -17,7 +17,7 @@ export default {
       secure: false,
     },
     '/api/': {
-      target: 'http://crontab:8080/v1',
+      target: 'http://crontab-master:8080/v1',
       changeOrigin: true,
       pathRewrite: {
         '^/api/': '',

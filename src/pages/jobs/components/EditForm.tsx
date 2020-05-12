@@ -1,21 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, DatePicker, Input, Modal, Radio, Select, Steps, Form } from 'antd';
 
-import { TableListItem } from '../data.d';
-
-export interface FormValueType extends Partial<TableListItem> {
-  target?: string;
-  template?: string;
+export interface FormValueType {
+  id?: string;
+  name?: string;
+  desc?: string;
+  sync?: boolean | number;
   type?: string;
-  time?: string;
-  frequency?: string;
+  detail?: any;
 }
 
-export interface UpdateFormProps {
-  onCancel: (flag?: boolean, formVals?: FormValueType) => void;
+export interface EditFormProps {
+  onCancel: () => void;
   onSubmit: (values: FormValueType) => void;
   updateModalVisible: boolean;
-  values: Partial<TableListItem>;
+  id?: string;
 }
 const FormItem = Form.Item;
 const { Step } = Steps;
@@ -33,28 +32,23 @@ const formLayout = {
   wrapperCol: { span: 13 },
 };
 
-const UpdateForm: React.FC<UpdateFormProps> = (props) => {
+const EditForm: React.FC<EditFormProps> = (props) => {
+  const { onSubmit, onCancel, updateModalVisible, id } = props;
   const [formVals, setFormVals] = useState<FormValueType>({
-    name: props.values.name,
-    desc: props.values.desc,
-    key: props.values.key,
-    target: '0',
-    template: '0',
-    type: '1',
-    time: '',
-    frequency: 'month',
+    sync: 1,
+    type: '0',
   });
-
   const [currentStep, setCurrentStep] = useState<number>(0);
-
+  const [type, setType] = useState<string>('0');
   const [form] = Form.useForm();
 
-  const {
-    onSubmit: handleUpdate,
-    onCancel: handleUpdateModalVisible,
-    updateModalVisible,
-    values,
-  } = props;
+  useEffect(() => {
+    if (id) {
+      console.log('修改查询数据');
+    } else {
+      console.log('添加数据');
+    }
+  }, [id]);
 
   const forward = () => setCurrentStep(currentStep + 1);
 
@@ -62,13 +56,13 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
 
   const handleNext = async () => {
     const fieldsValue = await form.validateFields();
-
+    console.log(fieldsValue);
     setFormVals({ ...formVals, ...fieldsValue });
 
     if (currentStep < 2) {
       forward();
     } else {
-      handleUpdate(formVals);
+      onSubmit(formVals);
     }
   };
 
@@ -76,24 +70,68 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
     if (currentStep === 1) {
       return (
         <>
-          <FormItem name="target" label="监控对象">
-            <Select style={{ width: '100%' }}>
-              <Option value="0">表一</Option>
-              <Option value="1">表二</Option>
-            </Select>
-          </FormItem>
-          <FormItem name="template" label="规则模板">
-            <Select style={{ width: '100%' }}>
-              <Option value="0">规则模板一</Option>
-              <Option value="1">规则模板二</Option>
-            </Select>
-          </FormItem>
-          <FormItem name="type" label="规则类型">
+          <FormItem name="sync" label="是否同步">
             <RadioGroup>
-              <Radio value="0">强</Radio>
-              <Radio value="1">弱</Radio>
+              <Radio value={0}>否</Radio>
+              <Radio value={1}>是</Radio>
             </RadioGroup>
           </FormItem>
+          <FormItem name="type" label="任务类型">
+            <Select onChange={(e: string) => setType(e)} style={{ width: '100%' }}>
+              <Option value="0">SHELL</Option>
+              <Option value="1">HTTP</Option>
+              <Option value="2">HTTPS</Option>
+              <Option value="3">gRpc</Option>
+              <Option value="4">GoRpc</Option>
+            </Select>
+          </FormItem>
+          {type === '0' ? (
+            <>
+              <FormItem name={['detail', 'arg']} label="参数">
+                <Input defaultValue="-c" />
+              </FormItem>
+              <FormItem name={['detail', 'interpreter']} label="解析器">
+                <Input defaultValue="/bin/bash" />
+              </FormItem>
+              <FormItem name={['detail', 'command']} label="脚本">
+                <Input.TextArea />
+              </FormItem>
+            </>
+          ) : null}
+          {type === '1' || type === '2' ? (
+            <>
+              <FormItem name={['detail', 'method']} label="请求方法">
+                <Select style={{ width: '100%' }}>
+                  <Option value="GET">GET</Option>
+                  <Option value="POST">POST</Option>
+                  <Option value="PUT">PUT</Option>
+                  <Option value="DELETE">DELETE</Option>
+                </Select>
+              </FormItem>
+              <FormItem name={['detail', 'url']} label="URL">
+                <Input />
+              </FormItem>
+              <FormItem name={['detail', 'headers']} label="Headers">
+                <Input.TextArea />
+              </FormItem>
+              <FormItem name={['detail', 'body']} label="Body">
+                <Input.TextArea />
+              </FormItem>
+            </>
+          ) : null}
+          {type === '3' || type === '4' ? (
+            <>
+              <FormItem name={['detail', 'address']} label="地址">
+                <Input />
+              </FormItem>
+              <FormItem name={['detail', 'task_id']} label="任务ID">
+                <Input.TextArea />
+              </FormItem>
+              <FormItem name={['detail', 'body']} label="Body">
+                <Input.TextArea />
+              </FormItem>
+            </>
+          ) : null}
         </>
       );
     }
@@ -148,7 +186,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           <Button style={{ float: 'left' }} onClick={backward}>
             上一步
           </Button>
-          <Button onClick={() => handleUpdateModalVisible(false, values)}>取消</Button>
+          <Button onClick={onCancel}>取消</Button>
           <Button type="primary" onClick={() => handleNext()}>
             下一步
           </Button>
@@ -161,7 +199,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           <Button style={{ float: 'left' }} onClick={backward}>
             上一步
           </Button>
-          <Button onClick={() => handleUpdateModalVisible(false, values)}>取消</Button>
+          <Button onClick={onCancel}>取消</Button>
           <Button type="primary" onClick={() => handleNext()}>
             完成
           </Button>
@@ -170,7 +208,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
     }
     return (
       <>
-        <Button onClick={() => handleUpdateModalVisible(false, values)}>取消</Button>
+        <Button onClick={onCancel}>取消</Button>
         <Button type="primary" onClick={() => handleNext()}>
           下一步
         </Button>
@@ -186,8 +224,8 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       title="规则配置"
       visible={updateModalVisible}
       footer={renderFooter()}
-      onCancel={() => handleUpdateModalVisible(false, values)}
-      afterClose={() => handleUpdateModalVisible()}
+      onCancel={onCancel}
+      afterClose={onCancel}
     >
       <Steps style={{ marginBottom: 28 }} size="small" current={currentStep}>
         <Step title="基本信息" />
@@ -198,12 +236,11 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         {...formLayout}
         form={form}
         initialValues={{
-          target: formVals.target,
-          template: formVals.template,
-          type: formVals.type,
-          frequency: formVals.frequency,
           name: formVals.name,
           desc: formVals.desc,
+          sync: formVals.sync,
+          type: formVals.type,
+          detail: formVals.detail,
         }}
       >
         {renderContent()}
@@ -212,4 +249,4 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   );
 };
 
-export default UpdateForm;
+export default EditForm;

@@ -1,6 +1,7 @@
 import request from '@/utils/request';
 import response from '@/utils/response';
-import { TableListParams, TableListItem } from './data.d';
+import { TableListParams } from './data.d';
+import { FormValueType } from './components/EditForm';
 
 export async function queryJobs(params?: TableListParams) {
   const result = await request.get('/jobs', {
@@ -19,22 +20,20 @@ export async function removeJob(params: { ids: string[] }) {
   });
 }
 
-export async function addJob(params: TableListItem) {
+export async function addJob(params: FormValueType) {
   return request('/jobs', {
     method: 'POST',
     data: {
       ...params,
-      method: 'post',
     },
   });
 }
 
-export async function updateJob(params: TableListParams) {
+export async function updateJob(params: FormValueType) {
   return request('/jobs', {
     method: 'POST',
     data: {
       ...params,
-      method: 'update',
     },
   });
 }
