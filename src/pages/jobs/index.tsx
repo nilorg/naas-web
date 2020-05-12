@@ -5,6 +5,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import { SorterResult } from 'antd/es/table/interface';
 
+import moment from 'moment';
 import EditForm, { FormValueType } from './components/EditForm';
 import { TableListItem } from './data.d';
 import { queryJobs, updateJob, removeJob, addJob } from './service';
@@ -71,7 +72,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: '描述',
-      dataIndex: 'description',
+      dataIndex: 'desc',
       valueType: 'textarea',
     },
     {
@@ -80,7 +81,7 @@ const TableList: React.FC<{}> = () => {
       sorter: true,
       hideInForm: true,
       hideInSearch: true,
-      renderText: (val: string) => `${val} 万`,
+      renderText: (val: string) => `${val} 次`,
     },
     {
       title: '状态',
@@ -106,9 +107,9 @@ const TableList: React.FC<{}> = () => {
       title: '上次调度时间',
       dataIndex: 'updatedAt',
       sorter: true,
-      valueType: 'dateTimeRange',
       hideInForm: true,
       hideInSearch: true,
+      renderText: (val: number) => moment.unix(val).format("YYYY-MM-DD HH:mm:ss"),
     },
     {
       title: '操作',
