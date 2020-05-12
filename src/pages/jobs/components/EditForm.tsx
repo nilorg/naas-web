@@ -7,6 +7,7 @@ export interface FormValueType {
   desc?: string;
   sync?: boolean | number;
   type?: string;
+  cron_expr?: string;
   detail?: any;
 }
 
@@ -34,14 +35,7 @@ const formLayout = {
 
 const EditForm: React.FC<EditFormProps> = (props) => {
   const { onSubmit, onCancel, updateModalVisible, id } = props;
-  const [formVals, setFormVals] = useState<FormValueType>({
-    sync: 1,
-    type: '0',
-    detail: {
-      arg: '-c',
-      interpreter: '/bin/bash',
-    },
-  });
+  const [formVals, setFormVals] = useState<FormValueType>({});
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [type, setType] = useState<string>('0');
   const [form] = Form.useForm();
@@ -51,6 +45,14 @@ const EditForm: React.FC<EditFormProps> = (props) => {
       console.log('修改查询数据');
     } else {
       console.log('添加数据');
+      setFormVals({
+        sync: 1,
+        type: '0',
+        detail: {
+          arg: '-c',
+          interpreter: '/bin/bash',
+        },
+      });
     }
   }, [id]);
 
@@ -60,12 +62,12 @@ const EditForm: React.FC<EditFormProps> = (props) => {
 
   const handleNext = async () => {
     const fieldsValue = await form.validateFields();
-    setFormVals({ ...formVals, ...fieldsValue });
-
+    const newformVals = { ...formVals, ...fieldsValue };
+    setFormVals(newformVals);
     if (currentStep < 2) {
       forward();
     } else {
-      onSubmit(formVals);
+      onSubmit(newformVals);
     }
   };
 
