@@ -49,7 +49,7 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
       const redirectURI = `${OAUTH2_CALLBACK}?${queryString}`;
       const OAUTH2_LOGIN = `${OAUTH2_SERVER}/oauth2/authorize?client_id=${OAUTH2_CLIENT_ID}&redirect_uri=${encodeURI(
         redirectURI,
-      )}&response_type=code&state=somestate&scope=read_write`;
+      )}&response_type=code&state=somestate&scope=openid`;
       window.location.href = OAUTH2_LOGIN;
       return null;
     }
