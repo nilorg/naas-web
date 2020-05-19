@@ -52,7 +52,9 @@ const requestHandler = (url: any, options: any) => {
   if (whiteUrl.findIndex((i) => url.startsWith(i)) === -1 && token) {
     const headers = {
       ...options.headers,
-      Authorization: `Bearer ${token.access_token}`,
+      Authorization: `Bearer ${
+        url === '/api/accounts/oidc/userinfo' ? token.id_token : token.access_token
+      }`,
     };
     return {
       url,

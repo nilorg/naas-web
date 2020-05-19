@@ -3,9 +3,15 @@ import { Effect, Reducer } from 'umi';
 import { queryCurrent, query as queryUsers } from '@/services/user';
 
 export interface CurrentUser {
-  userid?: string;
-  avatar?: string;
+  sub?: string;
   name?: string;
+  picture?: string;
+  nickname?: string;
+  gender?: number;
+  email?: string;
+  email_verified?: boolean;
+  phone?: string;
+  phone_verified?: boolean;
   // avatar?: string;
   // name?: string;
   // title?: string;
@@ -68,9 +74,7 @@ const UserModel: UserModelType = {
           ...state,
           currentUser:
             {
-              userid: payload.user.id,
-              avatar: payload.user_info.avatar_url,
-              name: payload.user_info.nick_name,
+              ...payload,
             } || {},
         };
       }

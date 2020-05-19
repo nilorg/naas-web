@@ -66,6 +66,11 @@ telepresence --namespace wohuitao --new-deployment crontab-web --expose 8000 \
 ```
 
 ```bash
+kubectl delete -n wohuitao deployment crontab-web
+kubectl delete -n wohuitao service crontab-web
+```
+
+```bash
 秒    分钟    小时    日    月    年
 */10  *       *      *    *      *
 ```

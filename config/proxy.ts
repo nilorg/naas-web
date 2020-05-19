@@ -16,6 +16,14 @@ export default {
       },
       secure: false,
     },
+    '/api/accounts/': {
+      target: 'http://naas.nilorg:8080',
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api/accounts/': '',
+      },
+      secure: false,
+    },
     '/api/': {
       target: 'http://crontab-master:8080/v1',
       changeOrigin: true,
