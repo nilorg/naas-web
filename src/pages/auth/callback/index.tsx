@@ -66,7 +66,7 @@ const Callback: React.FC<CallbackProps> = (props) => {
   const reloging = () => {
     const OAUTH2_LOGIN = `${OAUTH2_SERVER}/oauth2/authorize?client_id=${OAUTH2_CLIENT_ID}&redirect_uri=${encodeURI(
       OAUTH2_CALLBACK,
-    )}&response_type=code&state=somestate&scope=openid`;
+    )}&response_type=code&state=somestate&scope=openid profile email phone`;
     window.location.href = OAUTH2_LOGIN;
   };
 
