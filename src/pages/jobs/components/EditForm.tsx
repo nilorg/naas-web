@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Modal, Radio, Select, Steps, Form } from 'antd';
-import { getJob } from '../service';
+import { getJob, getExprList } from '../service';
 
 export interface FormValueType {
   id?: string;
@@ -39,8 +39,15 @@ const EditForm: React.FC<EditFormProps> = (props) => {
   const [formVals, setFormVals] = useState<FormValueType>({});
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [type, setType] = useState<string>('shell');
+  const [exprList, setExprList] = useState<Array<any>>();
   const [form] = Form.useForm();
-
+  useEffect(() => {
+    getExprList().then((result) => {
+      if (result.status === 'ok') {
+        setExprList(result.data);
+      }
+    });
+  }, []);
   useEffect(() => {
     if (id && updateModalVisible) {
       setCurrentStep(0);
@@ -195,11 +202,15 @@ const EditForm: React.FC<EditFormProps> = (props) => {
             label="Cron表达式"
             rules={[{ required: true, message: '请输入Cron表达式' }]}
           >
-            <Select>
-              <Select.Option value="* * */1 * * *">每1小时执行一次</Select.Option>
-              <Select.Option value="* */1 * * * *">每1分钟执行一次</Select.Option>
-              <Select.Option value="*/10 * * * * *">每10s执行一次</Select.Option>
-            </Select>
+            {exprList ? (
+              <Select>
+                {exprList.map((item) => (
+                  <Select.Option key={item.expr} value={item.expr}>
+                    {item.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            ) : null}
           </FormItem>
         </>
       );

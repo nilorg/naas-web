@@ -5,54 +5,27 @@ import ProTable, { ProColumns, ActionType, RequestData } from '@ant-design/pro-t
 import { UseFetchDataAction } from '@ant-design/pro-table/lib/useFetchData';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { SorterResult } from 'antd/es/table/interface';
-import moment from 'moment';
 
 import { removeConfirm } from '@/components/modal';
-import EditForm, { EditFormValueType } from './components/EditForm';
+import EditForm from './components/EditForm';
 import { TableListItem } from './data';
-import { queryColumn, updateColumn, removeColumn } from './service';
-
-// /**
-//  * 添加节点
-//  * @param value
-//  */
-// const handleAdd = async (value: EditFormValueType) => {
-//   const hide = message.loading('正在添加');
-//   try {
-//     const result = await addColumn({ ...value });
-//     hide();
-//     if (result.code === 1) {
-//       message.success('添加成功');
-//       return true;
-//     }
-//     message.error('添加失败');
-//     return false;
-//   } catch (error) {
-//     hide();
-//     message.error('添加失败请重试！');
-//     return false;
-//   }
-// };
+import { queryExpr, editExpr, removeExpr } from './service';
 
 /**
- * 更新节点
+ * 编辑节点
  * @param fields
  */
-const handleUpdate = async (fields: EditFormValueType) => {
-  const hide = message.loading('正在修改');
+const handleEdit = async (fields: any) => {
+  const hide = message.loading('正在保存');
   try {
-    const result = await updateColumn({
-      name: fields.name,
-      parentCode: fields.parentCode,
-      id: fields.id,
-    });
+    const resp = await editExpr(fields);
     hide();
-    if (result.code === 1) {
-      message.success('修改成功');
-      return true;
+    if (resp.status === 'error') {
+      message.error(`保存失败:${resp.error}`);
+      return false;
     }
-    message.error('修改失败');
-    return false;
+    message.success('保存成功');
+    return true;
   } catch (error) {
     hide();
     message.error('修改失败请重试！');
@@ -69,13 +42,13 @@ const handleRemove = async (
   selectedRows: TableListItem[],
 ) => {
   removeConfirm({
-    name: '栏目',
+    name: 'Cron表达式',
     count: selectedRows.length,
     onOk: async () => {
       const hide = message.loading('正在删除');
       if (!selectedRows) return true;
       try {
-        const result = await removeColumn({
+        const result = await removeExpr({
           ids: selectedRows.map((row) => row.id),
         });
         hide();
@@ -103,7 +76,7 @@ const TableList: React.FC<{}> = () => {
   // );
   const [sorter, setSorter] = useState<string>('');
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
-  const [updateFormValues, setUpdateFormValues] = useState({});
+  const [exprId, setExprId] = useState<string>();
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<TableListItem>[] = [
     {
@@ -112,46 +85,11 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: '表达式',
-      dataIndex: 'name',
+      dataIndex: 'expr',
     },
     {
-      title: '状态',
-      dataIndex: 'enabled',
-      hideInForm: true,
-      hideInSearch: true,
-      valueEnum: {
-        '0': { text: '禁用', status: 'Processing' },
-        '1': { text: '启用', status: 'Success' },
-      },
-    },
-    {
-      title: '创建人',
-      dataIndex: 'createUser',
-      hideInForm: true,
-      hideInSearch: true,
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      sorter: true,
-      valueType: 'dateRange',
-      renderText: (str) => (str ? moment(str).format('YYYY-MM-DD HH:mm:ss') : null),
-      hideInForm: true,
-    },
-    {
-      title: '最后修改人',
-      dataIndex: 'updateUser',
-      hideInForm: true,
-      hideInSearch: true,
-    },
-    {
-      title: '最后修改时间',
-      dataIndex: 'updateTime',
-      sorter: true,
-      valueType: 'dateRange',
-      renderText: (str) => moment(str).format('YYYY-MM-DD HH:mm:ss'),
-      hideInForm: true,
-      hideInSearch: true,
+      title: '描述',
+      dataIndex: 'description',
     },
   ];
 
@@ -185,7 +123,6 @@ const TableList: React.FC<{}> = () => {
                   selectedKeys={[]}
                 >
                   <Menu.Item key="remove">批量删除</Menu.Item>
-                  <Menu.Item key="approval">批量停用</Menu.Item>
                 </Menu>
               }
             >
@@ -198,7 +135,7 @@ const TableList: React.FC<{}> = () => {
             <Button
               type="default"
               onClick={() => {
-                setUpdateFormValues(selectedRows[0]);
+                setExprId(selectedRows[0].id);
                 setEditModalVisible(true);
               }}
             >
@@ -212,7 +149,7 @@ const TableList: React.FC<{}> = () => {
           ),
         ]}
         tableAlertRender={() => false}
-        request={(params) => queryColumn(params)}
+        request={(params) => queryExpr(params)}
         columns={columns}
         rowSelection={{}}
         options={{ fullScreen: false, reload: false, setting: false, density: false }}
@@ -220,9 +157,9 @@ const TableList: React.FC<{}> = () => {
       />
       <EditForm
         onSubmit={async (value) => {
-          const success = await handleUpdate(value);
+          const success = await handleEdit(value);
           if (success) {
-            setUpdateFormValues({});
+            setExprId(undefined);
             setEditModalVisible(false);
             if (actionRef.current) {
               actionRef.current.reload();
@@ -230,11 +167,11 @@ const TableList: React.FC<{}> = () => {
           }
         }}
         onCancel={() => {
-          setUpdateFormValues({});
+          setExprId(undefined);
           setEditModalVisible(false);
         }}
         modalVisible={editModalVisible}
-        values={updateFormValues}
+        id={exprId}
       />
     </PageHeaderWrapper>
   );

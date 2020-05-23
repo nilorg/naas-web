@@ -1,5 +1,5 @@
 export default {
-  toTataResult(result: any, convertItem: (item: any) => any) {
+  toPageResult(result: any, convertItem: (item: any) => any) {
     return {
       data: result.data.list.map((i: any) => convertItem(i)) || [],
       total: result.data.pagination.total || 0,

@@ -1,14 +1,8 @@
 export interface TableListItem {
   id: string;
-  code: string;
   name: string;
-  enabled: number;
-  parentCode: string;
-  deleteFlag: string;
-  createUser: string;
-  createTime: Date;
-  updateUser: string;
-  updateTime: Date;
+  expr: string;
+  description: string;
 }
 
 export interface TableListPagination {

@@ -7,7 +7,7 @@ export async function queryJobs(params?: TableListParams) {
   const result = await request.get('/jobs', {
     params,
   });
-  return response.toTataResult(result, (i) => i);
+  return response.toPageResult(result, (i) => i);
 }
 
 export async function getJob(params: { id: string }) {
@@ -38,4 +38,8 @@ export async function updateJob(params: FormValueType) {
       ...params,
     },
   });
+}
+
+export async function getExprList() {
+  return request.get('/cron_expressions?q=all');
 }

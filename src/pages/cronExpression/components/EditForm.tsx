@@ -1,20 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, TreeSelect, Input, Modal, Select } from 'antd';
-import { getTreeData } from '../service';
-
-export interface EditFormValueType {
-  id?: string;
-  name?: string;
-  code?: string;
-  parentCode?: string;
-  status?: string;
-}
+import { Form, Button, Input, Modal } from 'antd';
+import moment from 'moment';
+import { nextCronExpr, getExpr } from '../service';
 
 export interface EditFormProps {
+  id?: string;
   onCancel: () => void;
-  onSubmit: (values: EditFormValueType) => void;
+  onSubmit: (values: any) => void;
   modalVisible: boolean;
-  values: EditFormValueType;
 }
 
 const formLayout = {
@@ -23,29 +16,39 @@ const formLayout = {
 };
 
 const EditForm: React.FC<EditFormProps> = (props) => {
-  const [treeData, setTreeData] = useState([]);
-  useEffect(() => {
-    getTreeData({
-      type: 'id',
-    }).then((data) => setTreeData(data));
-  }, []);
-
   const [form] = Form.useForm();
-
-  const { onSubmit, onCancel, modalVisible: updateModalVisible, values } = props;
-
-  const handleNext = async () => {
+  const [cronNextExpr, setCronNextExpr] = useState<Array<string>>([]);
+  const { onSubmit, onCancel, modalVisible } = props;
+  useEffect(() => {
+    if (modalVisible && props.id) {
+      getExpr(props.id).then((expr) => {
+        if (expr.status === 'ok') {
+          form.setFieldsValue(expr.data);
+        }
+      });
+    } else {
+      form.resetFields();
+    }
+  }, [modalVisible]);
+  const handleComplete = async () => {
     const fieldsValue = await form.validateFields();
     onSubmit({
-      id: values.id,
+      id: props.id,
       ...fieldsValue,
     });
   };
-
+  const handleExprBlur = async (v: string) => {
+    const result = await nextCronExpr(v);
+    if (result.status === 'ok') {
+      setCronNextExpr(result.data);
+    } else {
+      setCronNextExpr([]);
+    }
+  };
   const renderFooter = () => (
     <>
-      <Button onClick={() => onCancel}>取消</Button>
-      <Button type="primary" onClick={() => handleNext()}>
+      <Button onClick={onCancel}>取消</Button>
+      <Button type="primary" onClick={handleComplete}>
         完成
       </Button>
     </>
@@ -54,40 +57,40 @@ const EditForm: React.FC<EditFormProps> = (props) => {
   return (
     <Modal
       destroyOnClose
-      title="编辑栏目"
-      visible={updateModalVisible}
+      maskClosable={false}
+      title="编辑表达式"
+      visible={modalVisible}
       onCancel={onCancel}
       afterClose={onCancel}
       footer={renderFooter()}
     >
-      <Form {...formLayout} form={form} initialValues={values}>
+      <Form {...formLayout} form={form}>
         <Form.Item
-          label="栏目名称"
+          label="名称"
           name="name"
-          rules={[{ required: true, message: '请输入栏目名称' }]}
+          rules={[{ required: true, message: '请输入表达式名称' }]}
         >
           <Input />
         </Form.Item>
-        <Form.Item label="编号" name="code" rules={[{ required: true, message: '请输入栏目编号' }]}>
-          <Input />
+        <Form.Item label="表达式" name="expr" rules={[{ required: true, message: '请输入表达式' }]}>
+          <Input
+            onBlur={(e) => {
+              handleExprBlur(e.target.value);
+            }}
+          />
         </Form.Item>
-
+        <div>
+          下次执行时间:
+          {cronNextExpr?.map((item) => {
+            return <p>{moment(item).format('YYYY-MM-DD HH:mm:ss')}</p>;
+          })}
+        </div>
         <Form.Item
-          label="上级栏目"
-          name="parentCode"
-          rules={[{ required: false, message: '请选择上级栏目' }]}
+          label="说明"
+          name="description"
+          rules={[{ required: false, message: '请输入表达式说明' }]}
         >
-          <TreeSelect treeData={treeData} placeholder="选择上级栏目" treeDefaultExpandAll />
-        </Form.Item>
-        <Form.Item
-          label="状态"
-          name="enabled"
-          rules={[{ required: true, message: '请选择栏目状态' }]}
-        >
-          <Select>
-            <Select.Option value="0">未发布</Select.Option>
-            <Select.Option value="1">已发布</Select.Option>
-          </Select>
+          <Input.TextArea />
         </Form.Item>
       </Form>
     </Modal>

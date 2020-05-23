@@ -6,5 +6,5 @@ export async function queryJobs(params?: TableListParams) {
   const result = await request.get('/logs', {
     params,
   });
-  return response.toTataResult(result, (i) => i);
+  return response.toPageResult(result, (i) => i);
 }
