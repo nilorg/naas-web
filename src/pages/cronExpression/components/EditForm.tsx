@@ -81,8 +81,8 @@ const EditForm: React.FC<EditFormProps> = (props) => {
         </Form.Item>
         <div>
           下次执行时间:
-          {cronNextExpr?.map((item) => {
-            return <p>{moment(item).format('YYYY-MM-DD HH:mm:ss')}</p>;
+          {cronNextExpr?.map((item, itemIndex) => {
+            return <p key={itemIndex}>{moment(item).format('YYYY-MM-DD HH:mm:ss')}</p>;
           })}
         </div>
         <Form.Item

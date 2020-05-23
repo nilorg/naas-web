@@ -86,7 +86,18 @@ export default defineConfig({
               name: '任务日志',
               icon: 'table',
               path: '/logs',
-              component: './logs/index',
+              routes: [
+                {
+                  path: '/logs',
+                  component: './logs/index',
+                },
+                {
+                  path: '/logs/execution_logs',
+                  name: '任务执行详情',
+                  component: './logs/detail/index',
+                  hideInMenu: true,
+                },
+              ],
             },
             {
               component: './404',

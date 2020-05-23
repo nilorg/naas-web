@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-// import { history } from 'umi';
+import { history } from 'umi';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import { SorterResult } from 'antd/es/table/interface';
@@ -93,8 +93,12 @@ const TableList: React.FC<TableListProps> = ({ location }) => {
           <>
             <a
               onClick={() => {
-                console.log(record);
-                // history.push(`/logs/execution_logs`);
+                history.push({
+                  pathname: '/logs/execution_logs',
+                  query: {
+                    id: record.id,
+                  },
+                });
               }}
             >
               查看详情
