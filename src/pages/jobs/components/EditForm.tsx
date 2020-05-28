@@ -191,6 +191,38 @@ const EditForm: React.FC<EditFormProps> = (props) => {
               </FormItem>
             </>
           ) : null}
+          {type === 'nats' ? (
+            <>
+              <FormItem
+                name={['detail', 'address']}
+                label="地址"
+                rules={[{ required: true, message: '请输入地址' }]}
+              >
+                <Input placeholder="127.0.0.1:9000" />
+              </FormItem>
+              <FormItem
+                name={['detail', 'topic']}
+                label="主题"
+                rules={[{ required: true, message: '请输入主题' }]}
+              >
+                <Input placeholder="nilorg.crontab.job.topic" defaultValue="nilorg.crontab.job.topic" />
+              </FormItem>
+              <FormItem
+                name={['detail', 'task_id']}
+                label="任务ID"
+                rules={[{ required: true, message: '请输入任务ID' }]}
+              >
+                <Input.TextArea />
+              </FormItem>
+              <FormItem
+                name={['detail', 'body']}
+                label="Body"
+                rules={[{ required: false, message: '请输入请求任务附带的值' }]}
+              >
+                <Input.TextArea />
+              </FormItem>
+            </>
+          ) : null}
         </>
       );
     }
