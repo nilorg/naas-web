@@ -205,7 +205,10 @@ const EditForm: React.FC<EditFormProps> = (props) => {
                 label="主题"
                 rules={[{ required: true, message: '请输入主题' }]}
               >
-                <Input placeholder="nilorg.crontab.job.topic" defaultValue="nilorg.crontab.job.topic" />
+                <Input
+                  placeholder="nilorg.crontab.job.topic"
+                  defaultValue="nilorg.crontab.job.topic"
+                />
               </FormItem>
               <FormItem
                 name={['detail', 'task_id']}
@@ -213,6 +216,13 @@ const EditForm: React.FC<EditFormProps> = (props) => {
                 rules={[{ required: true, message: '请输入任务ID' }]}
               >
                 <Input.TextArea />
+              </FormItem>
+              <FormItem
+                name={['detail', 'timeout']}
+                label="主题"
+                rules={[{ required: true, message: '请输入超时时间（毫秒）' }]}
+              >
+                <Input placeholder="1800000" defaultValue="1800000" />
               </FormItem>
               <FormItem
                 name={['detail', 'body']}
