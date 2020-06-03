@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Modal, Radio, Select, Steps, Form } from 'antd';
+import { Button, Input, InputNumber, Modal, Radio, Select, Steps, Form } from 'antd';
 import { getJob, getExprList } from '../service';
 
 export interface FormValueType {
   id?: string;
   name?: string;
   desc?: string;
-  sync?: boolean | number;
+  async?: boolean | number;
   type?: string;
   cron_expr?: string;
   detail?: any;
@@ -54,14 +54,15 @@ const EditForm: React.FC<EditFormProps> = (props) => {
       getJob({ id }).then((result) => {
         form.setFieldsValue({
           ...result,
-          sync: result.sync ? 1 : 0,
+          async: result.async ? 1 : 0,
         });
       });
     } else if (updateModalVisible) {
       setCurrentStep(0);
       form.setFieldsValue({
-        sync: 1,
+        async: 0,
         type: 'shell',
+        timeout: 1800000,
         detail: {
           arg: '-c',
           interpreter: '/bin/bash',
@@ -89,12 +90,6 @@ const EditForm: React.FC<EditFormProps> = (props) => {
     if (currentStep === 1) {
       return (
         <>
-          <FormItem name="sync" label="是否同步">
-            <RadioGroup>
-              <Radio value={0}>否</Radio>
-              <Radio value={1}>是</Radio>
-            </RadioGroup>
-          </FormItem>
           <FormItem name="type" label="任务类型">
             <Select onChange={(e: string) => setType(e)} style={{ width: '100%' }}>
               <Option value="shell">SHELL</Option>
@@ -103,6 +98,25 @@ const EditForm: React.FC<EditFormProps> = (props) => {
               <Option value="gorpc">GoRpc</Option>
               <Option value="grpc">gRpc</Option>
             </Select>
+          </FormItem>
+          <FormItem name="async" label="是否异步">
+            <RadioGroup>
+              <Radio value={0}>否</Radio>
+              <Radio value={1}>是</Radio>
+            </RadioGroup>
+          </FormItem>
+          <FormItem
+            name="timeout"
+            label="异步超时"
+            rules={[{ required: true, message: '请输入超时时间（毫秒）' }]}
+          >
+            <InputNumber
+              style={{
+                width: '100%',
+              }}
+              placeholder="1800000"
+              defaultValue={1800000}
+            />
           </FormItem>
           {type === 'shell' ? (
             <>
@@ -216,13 +230,6 @@ const EditForm: React.FC<EditFormProps> = (props) => {
                 rules={[{ required: true, message: '请输入任务ID' }]}
               >
                 <Input.TextArea />
-              </FormItem>
-              <FormItem
-                name={['detail', 'timeout']}
-                label="主题"
-                rules={[{ required: true, message: '请输入超时时间（毫秒）' }]}
-              >
-                <Input placeholder="1800000" defaultValue="1800000" />
               </FormItem>
               <FormItem
                 name={['detail', 'body']}

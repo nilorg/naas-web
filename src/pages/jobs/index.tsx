@@ -21,12 +21,12 @@ const handleEdit = async (fields: FormValueType) => {
     if (fields.id) {
       await updateJob({
         ...fields,
-        sync: fields.sync === 1,
+        async: fields.async === 1,
       });
     } else {
       await addJob({
         ...fields,
-        sync: fields.sync === 1,
+        async: fields.async === 1,
       });
     }
     hide();
