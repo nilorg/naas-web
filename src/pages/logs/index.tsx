@@ -78,6 +78,8 @@ const TableList: React.FC<TableListProps> = ({ location }) => {
       hideInSearch: true,
       valueEnum: {
         1: { text: '执行成功', status: 'Success' },
+        2: { text: '等待同步', status: 'Warning' },
+        3: { text: '等待超时', status: 'Error' },
         0: { text: '执行错误', status: 'Error' },
       },
     },

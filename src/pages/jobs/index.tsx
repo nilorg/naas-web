@@ -72,6 +72,10 @@ const TableList: React.FC<{}> = () => {
       dataIndex: 'name',
     },
     {
+      title: '任务类型',
+      dataIndex: 'type',
+    },
+    {
       title: '描述',
       dataIndex: 'desc',
       valueType: 'textarea',

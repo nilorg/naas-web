@@ -60,6 +60,8 @@ const EditForm: React.FC<EditFormProps> = (props) => {
     } else if (updateModalVisible) {
       setCurrentStep(0);
       form.setFieldsValue({
+        name: '',
+        desc: '',
         async: 0,
         type: 'shell',
         timeout: 1800000,
@@ -97,6 +99,7 @@ const EditForm: React.FC<EditFormProps> = (props) => {
               <Option value="https">HTTPS</Option>
               <Option value="gorpc">GoRpc</Option>
               <Option value="grpc">gRpc</Option>
+              <Option value="nats-streaming">nats-streaming</Option>
             </Select>
           </FormItem>
           <FormItem name="async" label="是否异步">
@@ -115,7 +118,6 @@ const EditForm: React.FC<EditFormProps> = (props) => {
                 width: '100%',
               }}
               placeholder="1800000"
-              defaultValue={1800000}
             />
           </FormItem>
           {type === 'shell' ? (
@@ -205,7 +207,7 @@ const EditForm: React.FC<EditFormProps> = (props) => {
               </FormItem>
             </>
           ) : null}
-          {type === 'nats' ? (
+          {type === 'nats-streaming' ? (
             <>
               <FormItem
                 name={['detail', 'address']}
@@ -219,10 +221,7 @@ const EditForm: React.FC<EditFormProps> = (props) => {
                 label="主题"
                 rules={[{ required: true, message: '请输入主题' }]}
               >
-                <Input
-                  placeholder="nilorg.crontab.job.topic"
-                  defaultValue="nilorg.crontab.job.topic"
-                />
+                <Input placeholder="nilorg.crontab.job.topic" />
               </FormItem>
               <FormItem
                 name={['detail', 'task_id']}
