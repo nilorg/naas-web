@@ -25,7 +25,7 @@ export default {
       secure: false,
     },
     '/api/': {
-      target: 'http://crontab-master.wohuitao:9090/v1',
+      target: 'http://crontab-master.wohuitao:8080/v1',
       changeOrigin: true,
       pathRewrite: {
         '^/api/': '',
