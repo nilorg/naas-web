@@ -88,9 +88,6 @@ const TableList: React.FC<TableListProps> = ({ location }) => {
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => {
-        if (record.status === 0) {
-          return null;
-        }
         return (
           <>
             <a
