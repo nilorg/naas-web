@@ -9,7 +9,7 @@
 export default {
   dev: {
     '/api/auth/': {
-      target: 'http://crontab-naas-token-server.wohuitao:8081',
+      target: 'http://naas-admin-token-server.nilorg:8081',
       changeOrigin: true,
       pathRewrite: {
         '^/api/': '',
@@ -25,7 +25,7 @@ export default {
       secure: false,
     },
     '/api/': {
-      target: 'http://crontab-master.wohuitao:8080/v1',
+      target: 'http://naas.nilorg:8080/api/v1',
       changeOrigin: true,
       pathRewrite: {
         '^/api/': '',
