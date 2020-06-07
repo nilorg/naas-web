@@ -11,7 +11,7 @@ export interface TokenData {
   id_token: string;
 }
 const TOKEN_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
-const TOKEN_KEY = 'nilorg-crontab-token';
+const TOKEN_KEY = 'nilorg-naas-token';
 // 设置Token
 export function setToken(token: any): void {
   const saveToken: TokenData = {

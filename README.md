@@ -2,6 +2,10 @@
 
 迁移代码，来自 crontab-web
 
+# 设计菜单原型
+
+![example](./src/assets/example.png)
+
 # telepresence
 
 ```bash

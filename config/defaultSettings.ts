@@ -55,7 +55,7 @@ export default {
   menu: {
     locale: true,
   },
-  title: '我惠淘任务调度系统',
+  title: 'Nilorg Naas',
   pwa: false,
   iconfontUrl: '',
 } as DefaultSettings;
