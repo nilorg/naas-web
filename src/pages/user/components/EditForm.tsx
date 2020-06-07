@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Form, Button, Input, Modal } from 'antd';
-import moment from 'moment';
-import { nextCronExpr, getExpr } from '../service';
+import { getExpr } from '../service';
 
 export interface EditFormProps {
   id?: string;
@@ -17,7 +16,7 @@ const formLayout = {
 
 const EditForm: React.FC<EditFormProps> = (props) => {
   const [form] = Form.useForm();
-  const [cronNextExpr, setCronNextExpr] = useState<Array<string>>([]);
+
   const { onSubmit, onCancel, modalVisible } = props;
   useEffect(() => {
     if (modalVisible && props.id) {
@@ -37,14 +36,7 @@ const EditForm: React.FC<EditFormProps> = (props) => {
       ...fieldsValue,
     });
   };
-  const handleExprBlur = async (v: string) => {
-    const result = await nextCronExpr(v);
-    if (result.status === 'ok') {
-      setCronNextExpr(result.data);
-    } else {
-      setCronNextExpr([]);
-    }
-  };
+
   const renderFooter = () => (
     <>
       <Button onClick={onCancel}>取消</Button>
@@ -58,7 +50,7 @@ const EditForm: React.FC<EditFormProps> = (props) => {
     <Modal
       destroyOnClose
       maskClosable={false}
-      title="编辑客户端"
+      title={`${props.id ? '编辑' : '添加'}用户`}
       visible={modalVisible}
       onCancel={onCancel}
       afterClose={onCancel}
@@ -66,31 +58,14 @@ const EditForm: React.FC<EditFormProps> = (props) => {
     >
       <Form {...formLayout} form={form}>
         <Form.Item
-          label="名称"
-          name="name"
-          rules={[{ required: true, message: '请输入表达式名称' }]}
+          label="用户名"
+          name="username"
+          rules={[{ required: true, message: '请输入用户名' }]}
         >
           <Input />
         </Form.Item>
-        <Form.Item label="表达式" name="expr" rules={[{ required: true, message: '请输入表达式' }]}>
-          <Input
-            onBlur={(e) => {
-              handleExprBlur(e.target.value);
-            }}
-          />
-        </Form.Item>
-        <div>
-          下次执行时间:
-          {cronNextExpr?.map((item, itemIndex) => {
-            return <p key={itemIndex}>{moment(item).format('YYYY-MM-DD HH:mm:ss')}</p>;
-          })}
-        </div>
-        <Form.Item
-          label="说明"
-          name="description"
-          rules={[{ required: false, message: '请输入表达式说明' }]}
-        >
-          <Input.TextArea />
+        <Form.Item label="密码" name="password" rules={[{ required: true, message: '请输入密码' }]}>
+          <Input />
         </Form.Item>
       </Form>
     </Modal>

@@ -8,7 +8,6 @@ import { SorterResult } from 'antd/es/table/interface';
 
 import { removeConfirm } from '@/components/modal';
 import EditForm from './components/EditForm';
-import { TableListItem } from './data';
 import { queryExpr, editExpr, removeExpr } from './service';
 
 /**
@@ -37,10 +36,7 @@ const handleEdit = async (fields: any) => {
  *  删除节点
  * @param selectedRows
  */
-const handleRemove = async (
-  action: UseFetchDataAction<RequestData<TableListItem>>,
-  selectedRows: TableListItem[],
-) => {
+const handleRemove = async (action: UseFetchDataAction<RequestData<any>>, selectedRows: any[]) => {
   removeConfirm({
     name: 'Cron表达式',
     count: selectedRows.length,
@@ -78,28 +74,54 @@ const TableList: React.FC<{}> = () => {
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
   const [exprId, setExprId] = useState<string>();
   const actionRef = useRef<ActionType>();
-  const columns: ProColumns<TableListItem>[] = [
+  const columns: ProColumns<any>[] = [
     {
-      title: '名称',
-      dataIndex: 'name',
+      title: '用户名',
+      dataIndex: 'username',
     },
     {
-      title: '表达式',
-      dataIndex: 'expr',
+      title: '昵称',
+      dataIndex: 'nickname',
+      hideInSearch: true,
     },
     {
-      title: '描述',
-      dataIndex: 'description',
+      title: '头像',
+      dataIndex: 'picture',
+      hideInSearch: true,
+      render: (_, record: any) => {
+        // eslint-disable-next-line jsx-a11y/alt-text
+        return <img width={48} height={48} src={record.picture} />;
+      },
+    },
+    {
+      title: '手机号',
+      dataIndex: 'phone',
+    },
+    {
+      title: '手机号验证',
+      dataIndex: 'phone_verified',
+      hideInSearch: true,
+      renderText: (val: boolean) => (val ? '已验证' : '未验证'),
+    },
+    {
+      title: '邮箱',
+      dataIndex: 'email',
+    },
+    {
+      title: '邮箱验证',
+      dataIndex: 'email_verified',
+      hideInSearch: true,
+      renderText: (val: boolean) => (val ? '已验证' : '未验证'),
     },
   ];
 
   return (
     <PageHeaderWrapper title={false}>
-      <ProTable<TableListItem>
+      <ProTable<any>
         actionRef={actionRef}
-        rowKey="id"
+        rowKey="user_id"
         onChange={(_, _filter, _sorter) => {
-          const sorterResult = _sorter as SorterResult<TableListItem>;
+          const sorterResult = _sorter as SorterResult<any>;
           if (sorterResult.field) {
             setSorter(`${sorterResult.field}_${sorterResult.order}`);
           }
