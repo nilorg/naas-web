@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Form, Button, Input, Modal } from 'antd';
-import { getExpr } from '../service';
+import { getById } from '../service';
 
 export interface EditFormProps {
   id?: string;
@@ -20,7 +20,7 @@ const EditForm: React.FC<EditFormProps> = (props) => {
   const { onSubmit, onCancel, modalVisible } = props;
   useEffect(() => {
     if (modalVisible && props.id) {
-      getExpr(props.id).then((expr) => {
+      getById(props.id).then((expr) => {
         if (expr.status === 'ok') {
           form.setFieldsValue(expr.data);
         }

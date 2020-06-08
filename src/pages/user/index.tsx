@@ -8,7 +8,7 @@ import { SorterResult } from 'antd/es/table/interface';
 
 import { removeConfirm } from '@/components/modal';
 import EditForm from './components/EditForm';
-import { queryExpr, editExpr, removeExpr } from './service';
+import { query, edit, remove } from './service';
 
 /**
  * 编辑节点
@@ -17,7 +17,7 @@ import { queryExpr, editExpr, removeExpr } from './service';
 const handleEdit = async (fields: any) => {
   const hide = message.loading('正在保存');
   try {
-    const resp = await editExpr(fields);
+    const resp = await edit(fields);
     hide();
     if (resp.status === 'error') {
       message.error(`保存失败:${resp.error}`);
@@ -44,8 +44,8 @@ const handleRemove = async (action: UseFetchDataAction<RequestData<any>>, select
       const hide = message.loading('正在删除');
       if (!selectedRows) return true;
       try {
-        const result = await removeExpr({
-          ids: selectedRows.map((row) => row.id),
+        const result = await remove({
+          ids: selectedRows.map((row) => row.user_id),
         });
         hide();
         if (result.code === 1) {
@@ -72,7 +72,7 @@ const TableList: React.FC<{}> = () => {
   // );
   const [sorter, setSorter] = useState<string>('');
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
-  const [exprId, setExprId] = useState<string>();
+  const [editId, setEditId] = useState<string>();
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<any>[] = [
     {
@@ -157,7 +157,7 @@ const TableList: React.FC<{}> = () => {
             <Button
               type="default"
               onClick={() => {
-                setExprId(selectedRows[0].id);
+                setEditId(selectedRows[0].user_id);
                 setEditModalVisible(true);
               }}
             >
@@ -171,7 +171,7 @@ const TableList: React.FC<{}> = () => {
           ),
         ]}
         tableAlertRender={() => false}
-        request={(params) => queryExpr(params)}
+        request={(params) => query(params)}
         columns={columns}
         rowSelection={{}}
         options={{ fullScreen: false, reload: false, setting: false, density: false }}
@@ -181,7 +181,7 @@ const TableList: React.FC<{}> = () => {
         onSubmit={async (value) => {
           const success = await handleEdit(value);
           if (success) {
-            setExprId(undefined);
+            setEditId(undefined);
             setEditModalVisible(false);
             if (actionRef.current) {
               actionRef.current.reload();
@@ -189,11 +189,11 @@ const TableList: React.FC<{}> = () => {
           }
         }}
         onCancel={() => {
-          setExprId(undefined);
+          setEditId(undefined);
           setEditModalVisible(false);
         }}
         modalVisible={editModalVisible}
-        id={exprId}
+        id={editId}
       />
     </PageHeaderWrapper>
   );
