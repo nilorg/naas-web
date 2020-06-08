@@ -38,7 +38,7 @@ const handleEdit = async (fields: any) => {
  */
 const handleRemove = async (action: UseFetchDataAction<RequestData<any>>, selectedRows: any[]) => {
   removeConfirm({
-    name: 'Cron表达式',
+    name: '用户',
     count: selectedRows.length,
     onOk: async () => {
       const hide = message.loading('正在删除');
@@ -48,7 +48,7 @@ const handleRemove = async (action: UseFetchDataAction<RequestData<any>>, select
           ids: selectedRows.map((row) => row.user_id),
         });
         hide();
-        if (result.code === 1) {
+        if (result.status === 'ok') {
           message.success('删除成功，即将刷新');
           action.reload();
           return true;
@@ -65,11 +65,6 @@ const handleRemove = async (action: UseFetchDataAction<RequestData<any>>, select
 };
 
 const TableList: React.FC<{}> = () => {
-  // const { data: treeCodeData } = useRequest(() =>
-  //   getTreeData({
-  //     type: 'code',
-  //   }),
-  // );
   const [sorter, setSorter] = useState<string>('');
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
   const [editId, setEditId] = useState<string>();
