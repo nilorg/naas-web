@@ -9,6 +9,39 @@
 export default {
   dev: {
     '/api/auth/': {
+      target: 'http://localhost:8081',
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api/': '',
+      },
+      secure: false,
+    },
+    '/api/accounts/': {
+      target: 'http://localhost:8080',
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api/accounts/': '',
+      },
+      secure: false,
+    },
+    '/api/': {
+      target: 'http://localhost:8080/api/v1',
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api/': '',
+      },
+      secure: false,
+    },
+  },
+  test: {
+    '/api/': {
+      target: 'https://preview.pro.ant.design',
+      changeOrigin: true,
+      pathRewrite: { '^': '' },
+    },
+  },
+  pre: {
+    '/api/auth/': {
       target: 'http://naas-admin-token-server.nilorg:8081',
       changeOrigin: true,
       pathRewrite: {
@@ -31,20 +64,6 @@ export default {
         '^/api/': '',
       },
       secure: false,
-    },
-  },
-  test: {
-    '/api/': {
-      target: 'https://preview.pro.ant.design',
-      changeOrigin: true,
-      pathRewrite: { '^': '' },
-    },
-  },
-  pre: {
-    '/api/': {
-      target: 'your pre url',
-      changeOrigin: true,
-      pathRewrite: { '^': '' },
     },
   },
 };
