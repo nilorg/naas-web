@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Button, Input, Modal } from 'antd';
-import moment from 'moment';
-import { nextCronExpr, getExpr } from '../service';
+import React, { useEffect } from 'react';
+import { Form, Button, Input, Modal, Select } from 'antd';
+import { getByCode } from '../service';
 
 export interface EditFormProps {
-  id?: string;
+  code?: string;
   onCancel: () => void;
   onSubmit: (values: any) => void;
   modalVisible: boolean;
@@ -17,11 +16,11 @@ const formLayout = {
 
 const EditForm: React.FC<EditFormProps> = (props) => {
   const [form] = Form.useForm();
-  const [cronNextExpr, setCronNextExpr] = useState<Array<string>>([]);
+
   const { onSubmit, onCancel, modalVisible } = props;
   useEffect(() => {
-    if (modalVisible && props.id) {
-      getExpr(props.id).then((expr) => {
+    if (modalVisible && props.code) {
+      getByCode(props.code).then((expr) => {
         if (expr.status === 'ok') {
           form.setFieldsValue(expr.data);
         }
@@ -33,18 +32,11 @@ const EditForm: React.FC<EditFormProps> = (props) => {
   const handleComplete = async () => {
     const fieldsValue = await form.validateFields();
     onSubmit({
-      id: props.id,
+      code: props.code,
       ...fieldsValue,
     });
   };
-  const handleExprBlur = async (v: string) => {
-    const result = await nextCronExpr(v);
-    if (result.status === 'ok') {
-      setCronNextExpr(result.data);
-    } else {
-      setCronNextExpr([]);
-    }
-  };
+
   const renderFooter = () => (
     <>
       <Button onClick={onCancel}>取消</Button>
@@ -58,39 +50,33 @@ const EditForm: React.FC<EditFormProps> = (props) => {
     <Modal
       destroyOnClose
       maskClosable={false}
-      title="编辑客户端"
+      title={`${props.code ? '编辑' : '添加'}OAuth2范围`}
       visible={modalVisible}
       onCancel={onCancel}
       afterClose={onCancel}
       footer={renderFooter()}
     >
       <Form {...formLayout} form={form}>
-        <Form.Item
-          label="名称"
-          name="name"
-          rules={[{ required: true, message: '请输入表达式名称' }]}
-        >
+        {props.code ? null : (
+          <Form.Item label="CODE" name="code" rules={[{ required: true, message: '请输入CODE' }]}>
+            <Input />
+          </Form.Item>
+        )}
+        <Form.Item label="名称" name="name" rules={[{ required: true, message: '请输入名称' }]}>
           <Input />
         </Form.Item>
-        <Form.Item label="表达式" name="expr" rules={[{ required: true, message: '请输入表达式' }]}>
-          <Input
-            onBlur={(e) => {
-              handleExprBlur(e.target.value);
-            }}
-          />
-        </Form.Item>
-        <div>
-          下次执行时间:
-          {cronNextExpr?.map((item, itemIndex) => {
-            return <p key={itemIndex}>{moment(item).format('YYYY-MM-DD HH:mm:ss')}</p>;
-          })}
-        </div>
         <Form.Item
-          label="说明"
+          label="描述"
           name="description"
-          rules={[{ required: false, message: '请输入表达式说明' }]}
+          rules={[{ required: true, message: '请输入描述' }]}
         >
           <Input.TextArea />
+        </Form.Item>
+        <Form.Item label="类型" name="type" rules={[{ required: false, message: '请选择类型' }]}>
+          <Select style={{ width: '100%' }}>
+            <Select.Option value="basic">基础</Select.Option>
+            <Select.Option value="default">默认</Select.Option>
+          </Select>
         </Form.Item>
       </Form>
     </Modal>
