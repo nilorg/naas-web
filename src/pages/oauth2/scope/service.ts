@@ -18,8 +18,8 @@ export async function getByCode(code: string) {
 }
 
 export async function edit(params: any) {
-  return request(`/oauth2/scopes${params.code ? `/${params.code}` : ''}`, {
-    method: params.code ? 'PUT' : 'POST',
+  return request(`/oauth2/scopes/${params.code}`, {
+    method: 'PUT',
     data: {
       ...params,
     },

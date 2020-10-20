@@ -71,10 +71,23 @@ export default defineConfig({
               ],
             },
             {
-              name: '用户',
-              icon: 'UserOutlined',
-              path: '/users',
-              component: './user/index',
+              name: '基础数据',
+              icon: 'LockOutlined',
+              path: '/basic',
+              routes: [
+                {
+                  name: '组织',
+                  icon: 'ShopOutlined',
+                  path: '/basic/organization',
+                  component: './basic/organization/index',
+                },
+                {
+                  name: '用户',
+                  icon: 'UserOutlined',
+                  path: '/basic/users',
+                  component: './basic/user/index',
+                },
+              ],
             },
             {
               name: 'OAuth2',

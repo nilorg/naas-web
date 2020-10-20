@@ -38,14 +38,14 @@ const handleEdit = async (fields: any) => {
  */
 const handleRemove = async (action: UseFetchDataAction<RequestData<any>>, selectedRows: any[]) => {
   removeConfirm({
-    name: 'OAuth2范围',
+    name: '用户',
     count: selectedRows.length,
     onOk: async () => {
       const hide = message.loading('正在删除');
       if (!selectedRows) return true;
       try {
         const result = await remove({
-          codes: selectedRows.map((row) => row.code),
+          ids: selectedRows.map((row) => row.organization.id),
         });
         hide();
         if (result.status === 'ok') {
@@ -67,29 +67,25 @@ const handleRemove = async (action: UseFetchDataAction<RequestData<any>>, select
 const TableList: React.FC<{}> = () => {
   const [sorter, setSorter] = useState<string>('');
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
-  const [editCode, setEditCode] = useState<string>();
+  const [editId, setEditId] = useState<string>();
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<any>[] = [
     {
-      title: 'CODE',
-      dataIndex: 'code',
+      title: '组织名称',
+      dataIndex: ['organization', 'name'],
     },
     {
-      title: '名称',
-      dataIndex: 'name',
+      title: '组织CODE',
+      dataIndex: ['organization', 'code'],
     },
     {
-      title: '描述',
-      dataIndex: 'description',
+      title: '组织描述',
+      dataIndex: ['organization', 'description'],
       hideInSearch: true,
     },
     {
-      title: '类型',
-      dataIndex: 'type',
-      valueEnum: {
-        basic: { text: '基础' },
-        default: { text: '默认' },
-      },
+      title: '上级组织',
+      dataIndex: ['parent_organization', 'name'],
     },
   ];
 
@@ -97,7 +93,7 @@ const TableList: React.FC<{}> = () => {
     <PageHeaderWrapper title={false}>
       <ProTable<any>
         actionRef={actionRef}
-        rowKey="code"
+        rowKey={(i) => i.organization.id}
         onChange={(_, _filter, _sorter) => {
           const sorterResult = _sorter as SorterResult<any>;
           if (sorterResult.field) {
@@ -135,7 +131,7 @@ const TableList: React.FC<{}> = () => {
             <Button
               type="default"
               onClick={() => {
-                setEditCode(selectedRows[0].code);
+                setEditId(selectedRows[0].organization.id);
                 setEditModalVisible(true);
               }}
             >
@@ -159,7 +155,7 @@ const TableList: React.FC<{}> = () => {
         onSubmit={async (value) => {
           const success = await handleEdit(value);
           if (success) {
-            setEditCode(undefined);
+            setEditId(undefined);
             setEditModalVisible(false);
             if (actionRef.current) {
               actionRef.current.reload();
@@ -167,11 +163,11 @@ const TableList: React.FC<{}> = () => {
           }
         }}
         onCancel={() => {
-          setEditCode(undefined);
+          setEditId(undefined);
           setEditModalVisible(false);
         }}
         modalVisible={editModalVisible}
-        code={editCode}
+        id={editId}
       />
     </PageHeaderWrapper>
   );
