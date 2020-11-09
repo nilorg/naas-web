@@ -38,14 +38,14 @@ const handleEdit = async (fields: any) => {
  */
 const handleRemove = async (action: UseFetchDataAction<RequestData<any>>, selectedRows: any[]) => {
   removeConfirm({
-    name: '组织',
+    name: '资源服务器',
     count: selectedRows.length,
     onOk: async () => {
       const hide = message.loading('正在删除');
       if (!selectedRows) return true;
       try {
         const result = await remove({
-          ids: selectedRows.map((row) => row.organization.id),
+          ids: selectedRows.map((row) => row.resource.id),
         });
         hide();
         if (result.status === 'ok') {
@@ -71,21 +71,22 @@ const TableList: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<any>[] = [
     {
-      title: '组织名称',
-      dataIndex: ['organization', 'name'],
+      title: '名称',
+      dataIndex: ['resource', 'name'],
     },
     {
-      title: '组织CODE',
-      dataIndex: ['organization', 'code'],
-    },
-    {
-      title: '组织描述',
-      dataIndex: ['organization', 'description'],
+      title: '描述',
+      dataIndex: ['resource', 'description'],
       hideInSearch: true,
     },
     {
-      title: '上级组织',
-      dataIndex: ['parent_organization', 'name'],
+      title: '密钥',
+      dataIndex: ['resource', 'secret'],
+      hideInSearch: true,
+    },
+    {
+      title: '组织',
+      dataIndex: ['organization', 'name'],
     },
   ];
 
@@ -93,7 +94,7 @@ const TableList: React.FC<{}> = () => {
     <PageHeaderWrapper title={false}>
       <ProTable<any>
         actionRef={actionRef}
-        rowKey={(i) => i.organization.id}
+        rowKey={(i) => i.resource.id}
         onChange={(_, _filter, _sorter) => {
           const sorterResult = _sorter as SorterResult<any>;
           if (sorterResult.field) {
@@ -131,7 +132,7 @@ const TableList: React.FC<{}> = () => {
             <Button
               type="default"
               onClick={() => {
-                setEditId(selectedRows[0].organization.id);
+                setEditId(selectedRows[0].resource.id);
                 setEditModalVisible(true);
               }}
             >

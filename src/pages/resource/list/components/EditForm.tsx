@@ -51,7 +51,7 @@ const EditForm: React.FC<EditFormProps> = (props) => {
     <Modal
       destroyOnClose
       maskClosable={false}
-      title={`${props.id ? '编辑' : '添加'}组织`}
+      title={`${props.id ? '编辑' : '添加'}资源服务器`}
       visible={modalVisible}
       onCancel={onCancel}
       afterClose={onCancel}
@@ -59,26 +59,26 @@ const EditForm: React.FC<EditFormProps> = (props) => {
     >
       <Form {...formLayout} form={form}>
         <Form.Item
-          label="组织名称"
+          label="资源名称"
           name="name"
-          rules={[{ required: true, message: '请输入用户名' }]}
+          rules={[{ required: true, message: '请输入资源名称' }]}
         >
           <Input />
         </Form.Item>
         <Form.Item
-          label="组织CODE"
-          name="code"
-          rules={[{ required: true, message: '请输入用户名' }]}
+          label="资源密钥"
+          name="secret"
+          rules={[{ required: true, message: '请输入资源密钥' }]}
         >
-          <Input disabled={props.id !== undefined} />
+          <Input maxLength={32} />
         </Form.Item>
-        <Form.Item label="组织描述" name="description" rules={[{ message: '请输入密码' }]}>
+        <Form.Item label="资源描述" name="description" rules={[{ message: '请输入资源描述' }]}>
           <Input.TextArea />
         </Form.Item>
         <Form.Item
-          label="上级组织"
-          name="parent_id"
-          rules={[{ message: '请选择上级组织', type: 'number' }]}
+          label="组织"
+          name="organization_id"
+          rules={[{ required: true, message: '请选择组织', type: 'number' }]}
         >
           <RemoteSelect type="organization" placeholder="选择组织" />
         </Form.Item>

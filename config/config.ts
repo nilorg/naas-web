@@ -139,13 +139,19 @@ export default defineConfig({
               path: '/resource',
               routes: [
                 {
-                  name: '路由',
+                  name: '资源服务器',
+                  icon: 'LinkOutlined',
+                  path: '/resource/list',
+                  component: './resource/list/index',
+                },
+                {
+                  name: 'WEB-路由',
                   icon: 'LinkOutlined',
                   path: '/resource/routes',
                   component: './resource/route/index',
                 },
                 {
-                  name: '菜单',
+                  name: 'WEB-菜单',
                   icon: 'table',
                   path: '/resource/menus',
                   component: './resource/menu/index',
