@@ -45,7 +45,7 @@ const handleRemove = async (action: UseFetchDataAction<RequestData<any>>, select
       if (!selectedRows) return true;
       try {
         const result = await remove({
-          ids: selectedRows.map((row) => row.resource.id),
+          ids: selectedRows.map((row) => row.resource_server.id),
         });
         hide();
         if (result.status === 'ok') {
@@ -72,16 +72,16 @@ const TableList: React.FC<{}> = () => {
   const columns: ProColumns<any>[] = [
     {
       title: '名称',
-      dataIndex: ['resource', 'name'],
+      dataIndex: ['resource_server', 'name'],
     },
     {
       title: '描述',
-      dataIndex: ['resource', 'description'],
+      dataIndex: ['resource_server', 'description'],
       hideInSearch: true,
     },
     {
       title: '密钥',
-      dataIndex: ['resource', 'secret'],
+      dataIndex: ['resource_server', 'secret'],
       hideInSearch: true,
     },
     {
@@ -94,7 +94,7 @@ const TableList: React.FC<{}> = () => {
     <PageHeaderWrapper title={false}>
       <ProTable<any>
         actionRef={actionRef}
-        rowKey={(i) => i.resource.id}
+        rowKey={(i) => i.resource_server.id}
         onChange={(_, _filter, _sorter) => {
           const sorterResult = _sorter as SorterResult<any>;
           if (sorterResult.field) {
@@ -132,7 +132,7 @@ const TableList: React.FC<{}> = () => {
             <Button
               type="default"
               onClick={() => {
-                setEditId(selectedRows[0].resource.id);
+                setEditId(selectedRows[0].resource_server.id);
                 setEditModalVisible(true);
               }}
             >

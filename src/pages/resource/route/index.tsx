@@ -8,8 +8,7 @@ import { SorterResult } from 'antd/es/table/interface';
 
 import { removeConfirm } from '@/components/modal';
 import EditForm from './components/EditForm';
-import { TableListItem } from './data';
-import { queryExpr, editExpr, removeExpr } from './service';
+import { query, edit, remove } from './service';
 
 /**
  * 编辑节点
@@ -18,7 +17,7 @@ import { queryExpr, editExpr, removeExpr } from './service';
 const handleEdit = async (fields: any) => {
   const hide = message.loading('正在保存');
   try {
-    const resp = await editExpr(fields);
+    const resp = await edit(fields);
     hide();
     if (resp.status === 'error') {
       message.error(`保存失败:${resp.error}`);
@@ -37,22 +36,19 @@ const handleEdit = async (fields: any) => {
  *  删除节点
  * @param selectedRows
  */
-const handleRemove = async (
-  action: UseFetchDataAction<RequestData<TableListItem>>,
-  selectedRows: TableListItem[],
-) => {
+const handleRemove = async (action: UseFetchDataAction<RequestData<any>>, selectedRows: any[]) => {
   removeConfirm({
-    name: 'Cron表达式',
+    name: 'Web路由',
     count: selectedRows.length,
     onOk: async () => {
       const hide = message.loading('正在删除');
       if (!selectedRows) return true;
       try {
-        const result = await removeExpr({
-          ids: selectedRows.map((row) => row.id),
+        const result = await remove({
+          ids: selectedRows.map((row) => row.resource_web_route.id),
         });
         hide();
-        if (result.code === 1) {
+        if (result.status === 'ok') {
           message.success('删除成功，即将刷新');
           action.reload();
           return true;
@@ -69,37 +65,38 @@ const handleRemove = async (
 };
 
 const TableList: React.FC<{}> = () => {
-  // const { data: treeCodeData } = useRequest(() =>
-  //   getTreeData({
-  //     type: 'code',
-  //   }),
-  // );
   const [sorter, setSorter] = useState<string>('');
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
-  const [exprId, setExprId] = useState<string>();
+  const [editId, setEditId] = useState<string>();
   const actionRef = useRef<ActionType>();
-  const columns: ProColumns<TableListItem>[] = [
+  const columns: ProColumns<any>[] = [
     {
       title: '名称',
-      dataIndex: 'name',
+      dataIndex: ['resource_web_route', 'name'],
     },
     {
-      title: '表达式',
-      dataIndex: 'expr',
+      title: '方法',
+      dataIndex: ['resource_web_route', 'method'],
+      hideInSearch: true,
     },
     {
-      title: '描述',
-      dataIndex: 'description',
+      title: '路由',
+      dataIndex: ['resource_web_route', 'path'],
+      hideInSearch: true,
+    },
+    {
+      title: '资源服务器',
+      dataIndex: ['resource_server', 'name'],
     },
   ];
 
   return (
     <PageHeaderWrapper title={false}>
-      <ProTable<TableListItem>
+      <ProTable<any>
         actionRef={actionRef}
-        rowKey="id"
+        rowKey={(i) => i.resource_web_route.id}
         onChange={(_, _filter, _sorter) => {
-          const sorterResult = _sorter as SorterResult<TableListItem>;
+          const sorterResult = _sorter as SorterResult<any>;
           if (sorterResult.field) {
             setSorter(`${sorterResult.field}_${sorterResult.order}`);
           }
@@ -135,7 +132,7 @@ const TableList: React.FC<{}> = () => {
             <Button
               type="default"
               onClick={() => {
-                setExprId(selectedRows[0].id);
+                setEditId(selectedRows[0].resource_web_route.id);
                 setEditModalVisible(true);
               }}
             >
@@ -149,7 +146,7 @@ const TableList: React.FC<{}> = () => {
           ),
         ]}
         tableAlertRender={() => false}
-        request={(params) => queryExpr(params)}
+        request={(params) => query(params)}
         columns={columns}
         rowSelection={{}}
         options={{ fullScreen: false, reload: false, setting: false, density: false }}
@@ -159,7 +156,7 @@ const TableList: React.FC<{}> = () => {
         onSubmit={async (value) => {
           const success = await handleEdit(value);
           if (success) {
-            setExprId(undefined);
+            setEditId(undefined);
             setEditModalVisible(false);
             if (actionRef.current) {
               actionRef.current.reload();
@@ -167,11 +164,11 @@ const TableList: React.FC<{}> = () => {
           }
         }}
         onCancel={() => {
-          setExprId(undefined);
+          setEditId(undefined);
           setEditModalVisible(false);
         }}
         modalVisible={editModalVisible}
-        id={exprId}
+        id={editId}
       />
     </PageHeaderWrapper>
   );

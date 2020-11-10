@@ -141,19 +141,19 @@ export default defineConfig({
                 {
                   name: '资源服务器',
                   icon: 'LinkOutlined',
-                  path: '/resource/list',
-                  component: './resource/list/index',
+                  path: '/resource/server',
+                  component: './resource/server/index',
                 },
                 {
                   name: 'WEB-路由',
                   icon: 'LinkOutlined',
-                  path: '/resource/routes',
+                  path: '/resource/web_routes',
                   component: './resource/route/index',
                 },
                 {
                   name: 'WEB-菜单',
                   icon: 'table',
-                  path: '/resource/menus',
+                  path: '/resource/web_menus',
                   component: './resource/menu/index',
                 },
               ],
