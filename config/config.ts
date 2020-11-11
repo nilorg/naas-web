@@ -87,6 +87,12 @@ export default defineConfig({
                   path: '/basic/users',
                   component: './basic/user/index',
                 },
+                {
+                  name: '角色',
+                  icon: 'UserOutlined',
+                  path: '/basic/roles',
+                  component: './basic/role/index',
+                },
               ],
             },
             {
@@ -141,7 +147,7 @@ export default defineConfig({
                 {
                   name: '资源服务器',
                   icon: 'LinkOutlined',
-                  path: '/resource/server',
+                  path: '/resource/servers',
                   component: './resource/server/index',
                 },
                 {
