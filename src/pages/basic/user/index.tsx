@@ -8,11 +8,12 @@ import { SorterResult } from 'antd/es/table/interface';
 
 import { removeConfirm } from '@/components/modal';
 import EditForm from './components/EditForm';
-import { query, edit, remove, editRoles } from './service';
+import { query, edit, remove, editRoles, editOrganizations } from './service';
 import EditRoleForm from './components/EditRoleForm';
+import EditOrganizationForm from './components/EditOrganizationForm';
 
 /**
- * 编辑节点
+ * 编辑用户
  * @param fields
  */
 const handleEditUser = async (fields: any) => {
@@ -60,7 +61,33 @@ const handleEditRole = async (fields: any, userId?: string) => {
 };
 
 /**
- *  删除节点
+ * 编辑组织
+ * @param fields
+ */
+const handleEditOrganization = async (fields: any, userId?: string) => {
+  if (!userId) {
+    message.error('修改失败，用户ID不存在');
+    return false;
+  }
+  const hide = message.loading('正在保存');
+  try {
+    const resp = await editOrganizations(userId, fields);
+    hide();
+    if (resp.status === 'error') {
+      message.error(`保存失败:${resp.error}`);
+      return false;
+    }
+    message.success('保存成功');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('修改失败请重试！');
+    return false;
+  }
+};
+
+/**
+ *  删除用户
  * @param selectedRows
  */
 const handleRemoveUser = async (
@@ -94,12 +121,23 @@ const handleRemoveUser = async (
   });
 };
 
+interface editOrganizationState {
+  modalVisible: boolean;
+  userId?: string;
+}
+
 const TableList: React.FC<{}> = () => {
   const [sorter, setSorter] = useState<string>('');
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
   const [editUserId, setEditUserId] = useState<string>();
   const [editRoleModalVisible, setEditRoleModalVisible] = useState<boolean>(false);
   const [editRoleWithUserId, setEditRoleWithUserId] = useState<string>();
+
+  const [editOrganization, setEditOrganization] = useState<editOrganizationState>({
+    modalVisible: false,
+    userId: undefined,
+  });
+
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<any>[] = [
     {
@@ -148,8 +186,10 @@ const TableList: React.FC<{}> = () => {
         <a
           key={`editOrg_${val}`}
           onClick={() => {
-            setEditRoleWithUserId(val);
-            setEditRoleModalVisible(true);
+            setEditOrganization({
+              modalVisible: true,
+              userId: val,
+            });
           }}
         >
           组织配置
@@ -254,9 +294,6 @@ const TableList: React.FC<{}> = () => {
           if (success) {
             setEditRoleWithUserId(undefined);
             setEditRoleModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
           }
         }}
         onCancel={() => {
@@ -265,6 +302,25 @@ const TableList: React.FC<{}> = () => {
         }}
         modalVisible={editRoleModalVisible}
         userId={editRoleWithUserId}
+      />
+      <EditOrganizationForm
+        onSubmit={async (value) => {
+          const success = await handleEditOrganization(value, editOrganization.userId);
+          if (success) {
+            setEditOrganization({
+              userId: undefined,
+              modalVisible: false,
+            });
+          }
+        }}
+        onCancel={() => {
+          setEditOrganization({
+            userId: undefined,
+            modalVisible: false,
+          });
+        }}
+        modalVisible={editOrganization.modalVisible}
+        userId={editOrganization.userId}
       />
     </PageHeaderWrapper>
   );

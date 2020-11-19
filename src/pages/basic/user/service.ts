@@ -25,6 +25,7 @@ export async function edit(params: any) {
     },
   });
 }
+
 export async function editRoles(userId: string, params: any) {
   return request(`/users/${userId}/roles`, {
     method: 'PUT',
@@ -34,6 +35,14 @@ export async function editRoles(userId: string, params: any) {
   });
 }
 
+export async function editOrganizations(userId: string, params: any) {
+  return request(`/users/${userId}/organizations`, {
+    method: 'PUT',
+    data: {
+      ...params,
+    },
+  });
+}
 export async function getOrganizationByUserId(id: string) {
   return request.get(`/users/${id}/organizations`);
 }

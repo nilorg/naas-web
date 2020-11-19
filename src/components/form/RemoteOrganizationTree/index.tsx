@@ -2,16 +2,19 @@ import { Tree } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { getTree } from './service';
 
-interface RemoteTreeProps {
-  organizationId?: number;
+interface RemoteOrganizationTreeProps {
   value?: any;
   disabled?: boolean;
   onChange?: (fields?: any) => void;
 }
 
-const RemoteTree: React.FC<RemoteTreeProps> = ({ organizationId, value, onChange, disabled }) => {
-  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
-  const [checkedKeys, setCheckedKeys] = useState<string[]>([]);
+const RemoteOrganizationTree: React.FC<RemoteOrganizationTreeProps> = ({
+  value,
+  onChange,
+  disabled,
+}) => {
+  const [expandedKeys, setExpandedKeys] = useState<number[]>([]);
+  const [checkedKeys, setCheckedKeys] = useState<number[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
   const [treeData, setTreeData] = useState<any[]>([]);
 
@@ -29,8 +32,8 @@ const RemoteTree: React.FC<RemoteTreeProps> = ({ organizationId, value, onChange
     }
   };
 
-  const onLoadData = async (orgId: number) => {
-    const result = await getTree(orgId);
+  const onLoadData = async () => {
+    const result = await getTree();
     setExpandedKeys([]);
     setCheckedKeys([]);
     if (result.status === 'ok') {
@@ -41,14 +44,8 @@ const RemoteTree: React.FC<RemoteTreeProps> = ({ organizationId, value, onChange
   };
 
   useEffect(() => {
-    if (organizationId && organizationId > 0) {
-      onLoadData(organizationId);
-    } else {
-      setExpandedKeys([]);
-      setCheckedKeys([]);
-      setTreeData([]);
-    }
-  }, [organizationId]);
+    onLoadData();
+  }, []);
 
   useEffect(() => {
     if (treeData && treeData.length > 0) {
@@ -56,7 +53,6 @@ const RemoteTree: React.FC<RemoteTreeProps> = ({ organizationId, value, onChange
     } else {
       setCheckedKeys([]);
     }
-    // setCheckedKeys(value || []);
   }, [treeData, value]);
 
   return (
@@ -74,4 +70,4 @@ const RemoteTree: React.FC<RemoteTreeProps> = ({ organizationId, value, onChange
   );
 };
 
-export default RemoteTree;
+export default RemoteOrganizationTree;

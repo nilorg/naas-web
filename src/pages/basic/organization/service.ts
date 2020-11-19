@@ -3,7 +3,7 @@ import response from '@/utils/response';
 import { TableListParams } from './data';
 
 export async function query(params?: TableListParams) {
-  const result = await request.get('/organizations', {
+  const result = await request.get('/organizations?q=list', {
     params,
   });
   return response.toPageResult(result, (i: any) => i);

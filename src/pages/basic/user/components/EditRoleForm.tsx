@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Button, Modal, Select } from 'antd';
-import { RemoteTree } from '@/components/form';
+import { RemoteRoleTree } from '@/components/form';
 import { getOrganizationByUserId, getRolesByUserIdAndOrganizationId } from '../service';
 
 export interface EditRoleFormProps {
@@ -65,7 +65,6 @@ const EditRoleForm: React.FC<EditRoleFormProps> = (props) => {
   const handleComplete = async () => {
     const fieldsValue = await form.validateFields();
     onSubmit({
-      id: props.userId,
       ...fieldsValue,
     });
   };
@@ -83,7 +82,7 @@ const EditRoleForm: React.FC<EditRoleFormProps> = (props) => {
     <Modal
       destroyOnClose
       maskClosable={false}
-      title="编辑绝色"
+      title="编辑角色"
       visible={modalVisible}
       onCancel={onCancel}
       afterClose={onCancel}
@@ -115,11 +114,11 @@ const EditRoleForm: React.FC<EditRoleFormProps> = (props) => {
         </Form.Item>
 
         <Form.Item
-          label="上级角色"
+          label="角色"
           name="roles"
           rules={[{ required: true, message: '请选择角色', type: 'array' }]}
         >
-          <RemoteTree organizationId={organizationId} />
+          <RemoteRoleTree organizationId={organizationId} />
         </Form.Item>
       </Form>
     </Modal>

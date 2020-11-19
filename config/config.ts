@@ -93,13 +93,6 @@ export default defineConfig({
                   path: '/basic/users',
                   component: './basic/user/index',
                 },
-                {
-                  name: '角色配置',
-                  icon: 'UserOutlined',
-                  path: '/basic/users/roles',
-                  component: './basic/user/role/index',
-                  hideInMenu: true,
-                },
               ],
             },
             {
