@@ -2,9 +2,7 @@
 import { defineConfig } from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
-
 const { REACT_APP_ENV } = process.env;
-
 export default defineConfig({
   hash: true,
   antd: {},
@@ -126,16 +124,16 @@ export default defineConfig({
                   component: './casbin/tenant/index',
                 },
                 {
-                  name: '角色',
-                  icon: 'TeamOutlined',
-                  path: '/casbin/roles',
-                  component: './casbin/role/index',
-                },
-                {
                   name: '访问策略',
                   icon: 'ShareAltOutlined',
                   path: '/casbin/policys',
                   component: './casbin/policy/index',
+                },
+                {
+                  name: '角色',
+                  icon: 'TeamOutlined',
+                  path: '/casbin/roles',
+                  component: './casbin/role/index',
                 },
               ],
             },

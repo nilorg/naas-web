@@ -8,13 +8,14 @@ import { SorterResult } from 'antd/es/table/interface';
 
 import { removeConfirm } from '@/components/modal';
 import EditForm from './components/EditForm';
-import { query, edit, remove } from './service';
+import { query, edit, remove, editClientScopes } from './service';
+import EditScopeForm from './components/EditScopeForm';
 
 /**
- * 编辑节点
+ * 编辑客户端
  * @param fields
  */
-const handleEdit = async (fields: any) => {
+const handleEditClient = async (fields: any) => {
   const hide = message.loading('正在保存');
   try {
     const resp = await edit(fields);
@@ -31,9 +32,34 @@ const handleEdit = async (fields: any) => {
     return false;
   }
 };
+/**
+ * 编辑客户端范围
+ * @param fields
+ */
+const handleEditClientScopes = async (fields: any, clientId?: string) => {
+  if (!clientId) {
+    message.error('修改失败，OAuth2客户端ID不存在');
+    return false;
+  }
+  const hide = message.loading('正在保存');
+  try {
+    const resp = await editClientScopes(clientId, fields);
+    hide();
+    if (resp.status === 'error') {
+      message.error(`保存失败:${resp.error}`);
+      return false;
+    }
+    message.success('保存成功');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('修改失败请重试！');
+    return false;
+  }
+};
 
 /**
- *  删除节点
+ *  删除客户端
  * @param selectedRows
  */
 const handleRemove = async (action: UseFetchDataAction<RequestData<any>>, selectedRows: any[]) => {
@@ -64,10 +90,24 @@ const handleRemove = async (action: UseFetchDataAction<RequestData<any>>, select
   });
 };
 
+interface editClientState {
+  modalVisible: boolean;
+  id?: string;
+}
+
+interface editClientScopeState {
+  modalVisible: boolean;
+  clientId?: string;
+}
+
 const TableList: React.FC<{}> = () => {
   const [sorter, setSorter] = useState<string>('');
-  const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
-  const [editId, setEditId] = useState<string>();
+  const [editClient, setEditClient] = useState<editClientState>({
+    modalVisible: false,
+  });
+  const [editClientScope, setEditClientScope] = useState<editClientScopeState>({
+    modalVisible: false,
+  });
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<any>[] = [
     {
@@ -102,6 +142,24 @@ const TableList: React.FC<{}> = () => {
       dataIndex: 'website',
       hideInSearch: true,
     },
+    {
+      title: '操作',
+      valueType: 'option',
+      dataIndex: 'client_id',
+      render: (val: any) => [
+        <a
+          key={`editScope_${val}`}
+          onClick={() => {
+            setEditClientScope({
+              modalVisible: true,
+              clientId: val,
+            });
+          }}
+        >
+          范围配置
+        </a>,
+      ],
+    },
   ];
 
   return (
@@ -119,7 +177,15 @@ const TableList: React.FC<{}> = () => {
           sorter,
         }}
         toolBarRender={(action, { selectedRows }) => [
-          <Button type="primary" onClick={() => setEditModalVisible(true)}>
+          <Button
+            type="primary"
+            onClick={() =>
+              setEditClient({
+                ...editClient,
+                modalVisible: true,
+              })
+            }
+          >
             <PlusOutlined /> 新建
           </Button>,
           selectedRows && selectedRows.length > 1 && (
@@ -146,8 +212,10 @@ const TableList: React.FC<{}> = () => {
             <Button
               type="default"
               onClick={() => {
-                setEditId(selectedRows[0].client_id);
-                setEditModalVisible(true);
+                setEditClient({
+                  modalVisible: true,
+                  id: selectedRows[0].client_id,
+                });
               }}
             >
               <EditFilled /> 编辑
@@ -168,21 +236,44 @@ const TableList: React.FC<{}> = () => {
       />
       <EditForm
         onSubmit={async (value) => {
-          const success = await handleEdit(value);
+          const success = await handleEditClient(value);
           if (success) {
-            setEditId(undefined);
-            setEditModalVisible(false);
+            setEditClient({
+              modalVisible: false,
+              id: undefined,
+            });
             if (actionRef.current) {
               actionRef.current.reload();
             }
           }
         }}
         onCancel={() => {
-          setEditId(undefined);
-          setEditModalVisible(false);
+          setEditClient({
+            modalVisible: false,
+            id: undefined,
+          });
         }}
-        modalVisible={editModalVisible}
-        id={editId}
+        modalVisible={editClient.modalVisible}
+        id={editClient.id}
+      />
+      <EditScopeForm
+        onSubmit={async (value) => {
+          const success = await handleEditClientScopes(value, editClientScope.clientId);
+          if (success) {
+            setEditClientScope({
+              modalVisible: false,
+              clientId: undefined,
+            });
+          }
+        }}
+        onCancel={() => {
+          setEditClientScope({
+            modalVisible: false,
+            clientId: undefined,
+          });
+        }}
+        modalVisible={editClientScope.modalVisible}
+        clientId={editClientScope.clientId}
       />
     </PageHeaderWrapper>
   );

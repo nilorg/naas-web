@@ -25,3 +25,16 @@ export async function edit(params: any) {
     },
   });
 }
+
+export async function getClientScopeByClientId(clientId: string) {
+  return request.get(`/oauth2/clients/${clientId}/scopes`);
+}
+
+export async function editClientScopes(clientId: string, params: any) {
+  return request(`/oauth2/clients/${clientId}/scopes`, {
+    method: 'PUT',
+    data: {
+      ...params,
+    },
+  });
+}
