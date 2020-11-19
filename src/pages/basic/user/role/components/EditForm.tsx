@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Button, Input, Modal } from 'antd';
-import { RemoteSearchSelect } from '@/components/form';
+import { RemoteRoleTreeSelect, RemoteSearchSelect } from '@/components/form';
 import { getById } from '../service';
 
 export interface EditFormProps {
@@ -96,9 +96,9 @@ const EditForm: React.FC<EditFormProps> = (props) => {
         <Form.Item
           label="上级角色"
           name="parent_code"
-          rules={[{ required: false, message: '请选择角色', type: 'string' }]}
+          rules={[{ required: false, message: '请选择角色', type: 'array' }]}
         >
-          <RemoteSearchSelect organizationId={organizationId} type="role" placeholder="选择角色" />
+          <RemoteRoleTreeSelect organizationId={organizationId} placeholder="选择角色11" />
         </Form.Item>
       </Form>
     </Modal>

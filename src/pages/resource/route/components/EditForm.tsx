@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Form, Button, Input, Modal, Select } from 'antd';
-import { RemoteSelect } from '@/components/form';
+import { RemoteSearchSelect } from '@/components/form';
 import { getById } from '../service';
 
 export interface EditFormProps {
@@ -101,7 +101,7 @@ const EditForm: React.FC<EditFormProps> = (props) => {
           name="resource_server_id"
           rules={[{ required: true, message: '请选资源服务器', type: 'number' }]}
         >
-          <RemoteSelect type="resource_server" placeholder="选择资源服务器" />
+          <RemoteSearchSelect type="resource_server" placeholder="选择资源服务器" />
         </Form.Item>
       </Form>
     </Modal>

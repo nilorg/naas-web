@@ -1,6 +1,13 @@
 import React, { useState, useRef } from 'react';
-import { Button, Divider, Dropdown, Menu, message } from 'antd';
-import { DownOutlined, PlusOutlined, DeleteFilled, EditFilled } from '@ant-design/icons';
+import { history } from 'umi';
+import { Button, Dropdown, Menu, message } from 'antd';
+import {
+  DownOutlined,
+  PlusOutlined,
+  DeleteFilled,
+  EditFilled,
+  ArrowLeftOutlined,
+} from '@ant-design/icons';
 import ProTable, { ProColumns, ActionType, RequestData } from '@ant-design/pro-table';
 import { UseFetchDataAction } from '@ant-design/pro-table/lib/useFetchData';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
@@ -8,14 +15,13 @@ import { SorterResult } from 'antd/es/table/interface';
 
 import { removeConfirm } from '@/components/modal';
 import EditForm from './components/EditForm';
-import { query, edit, remove, editRoles } from './service';
-import EditRoleForm from './components/EditRoleForm';
+import { query, edit, remove } from './service';
 
 /**
  * 编辑节点
  * @param fields
  */
-const handleEditUser = async (fields: any) => {
+const handleEdit = async (fields: any) => {
   const hide = message.loading('正在保存');
   try {
     const resp = await edit(fields);
@@ -34,48 +40,19 @@ const handleEditUser = async (fields: any) => {
 };
 
 /**
- * 编辑角色
- * @param fields
- */
-const handleEditRole = async (fields: any, userId?: string) => {
-  if (!userId) {
-    message.error('修改失败，用户ID不存在');
-    return false;
-  }
-  const hide = message.loading('正在保存');
-  try {
-    const resp = await editRoles(userId, fields);
-    hide();
-    if (resp.status === 'error') {
-      message.error(`保存失败:${resp.error}`);
-      return false;
-    }
-    message.success('保存成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('修改失败请重试！');
-    return false;
-  }
-};
-
-/**
  *  删除节点
  * @param selectedRows
  */
-const handleRemoveUser = async (
-  action: UseFetchDataAction<RequestData<any>>,
-  selectedRows: any[],
-) => {
+const handleRemove = async (action: UseFetchDataAction<RequestData<any>>, selectedRows: any[]) => {
   removeConfirm({
-    name: '用户',
+    name: '角色',
     count: selectedRows.length,
     onOk: async () => {
       const hide = message.loading('正在删除');
       if (!selectedRows) return true;
       try {
         const result = await remove({
-          ids: selectedRows.map((row) => row.user_id),
+          codes: selectedRows.map((row) => row.role.code),
         });
         hide();
         if (result.status === 'ok') {
@@ -97,74 +74,29 @@ const handleRemoveUser = async (
 const TableList: React.FC<{}> = () => {
   const [sorter, setSorter] = useState<string>('');
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
-  const [editUserId, setEditUserId] = useState<string>();
-  const [editRoleModalVisible, setEditRoleModalVisible] = useState<boolean>(false);
-  const [editRoleWithUserId, setEditRoleWithUserId] = useState<string>();
+  const [editId, setEditId] = useState<string>();
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<any>[] = [
     {
-      title: '用户名',
-      dataIndex: 'username',
+      title: '名称',
+      dataIndex: ['role', 'name'],
     },
     {
-      title: '昵称',
-      dataIndex: 'nickname',
+      title: 'CODE',
+      dataIndex: ['role', 'code'],
+    },
+    {
+      title: '描述',
+      dataIndex: ['role', 'description'],
       hideInSearch: true,
     },
     {
-      title: '头像',
-      dataIndex: 'picture',
-      hideInSearch: true,
-      render: (_, record: any) => {
-        // eslint-disable-next-line jsx-a11y/alt-text
-        return <img width={48} height={48} src={record.picture} />;
-      },
+      title: '上级角色',
+      dataIndex: ['parent_role', 'name'],
     },
     {
-      title: '手机号',
-      dataIndex: 'phone',
-    },
-    {
-      title: '手机号验证',
-      dataIndex: 'phone_verified',
-      hideInSearch: true,
-      renderText: (val: boolean) => (val ? '已验证' : '未验证'),
-    },
-    {
-      title: '邮箱',
-      dataIndex: 'email',
-    },
-    {
-      title: '邮箱验证',
-      dataIndex: 'email_verified',
-      hideInSearch: true,
-      renderText: (val: boolean) => (val ? '已验证' : '未验证'),
-    },
-    {
-      title: '操作',
-      valueType: 'option',
-      dataIndex: 'user_id',
-      render: (val: any) => [
-        <a
-          key={`editOrg_${val}`}
-          onClick={() => {
-            setEditRoleWithUserId(val);
-            setEditRoleModalVisible(true);
-          }}
-        >
-          组织配置
-        </a>,
-        <Divider key={`divider_option_${val}`} type="vertical" />,
-        <a
-          key={`editRole_${val}`}
-          onClick={() => {
-            setEditRoleWithUserId(val);
-            setEditRoleModalVisible(true);
-          }}
-        >
-          角色配置
-        </a>,
-      ],
+      title: '组织',
+      dataIndex: ['organization', 'name'],
     },
   ];
 
@@ -172,7 +104,7 @@ const TableList: React.FC<{}> = () => {
     <PageHeaderWrapper title={false}>
       <ProTable<any>
         actionRef={actionRef}
-        rowKey="user_id"
+        rowKey={(i) => i.role.code}
         onChange={(_, _filter, _sorter) => {
           const sorterResult = _sorter as SorterResult<any>;
           if (sorterResult.field) {
@@ -183,6 +115,9 @@ const TableList: React.FC<{}> = () => {
           sorter,
         }}
         toolBarRender={(action, { selectedRows }) => [
+          <Button type="default" onClick={() => history.goBack()}>
+            <ArrowLeftOutlined /> 返回
+          </Button>,
           <Button type="primary" onClick={() => setEditModalVisible(true)}>
             <PlusOutlined /> 新建
           </Button>,
@@ -192,7 +127,7 @@ const TableList: React.FC<{}> = () => {
                 <Menu
                   onClick={(e) => {
                     if (e.key === 'remove') {
-                      handleRemoveUser(action, selectedRows);
+                      handleRemove(action, selectedRows);
                     }
                   }}
                   selectedKeys={[]}
@@ -210,7 +145,7 @@ const TableList: React.FC<{}> = () => {
             <Button
               type="default"
               onClick={() => {
-                setEditUserId(selectedRows[0].user_id);
+                setEditId(selectedRows[0].role.code);
                 setEditModalVisible(true);
               }}
             >
@@ -218,7 +153,7 @@ const TableList: React.FC<{}> = () => {
             </Button>
           ),
           selectedRows && selectedRows.length === 1 && (
-            <Button type="primary" danger onClick={() => handleRemoveUser(action, selectedRows)}>
+            <Button type="primary" danger onClick={() => handleRemove(action, selectedRows)}>
               <DeleteFilled /> 删除
             </Button>
           ),
@@ -232,9 +167,9 @@ const TableList: React.FC<{}> = () => {
       />
       <EditForm
         onSubmit={async (value) => {
-          const success = await handleEditUser(value);
+          const success = await handleEdit(value);
           if (success) {
-            setEditUserId(undefined);
+            setEditId(undefined);
             setEditModalVisible(false);
             if (actionRef.current) {
               actionRef.current.reload();
@@ -242,29 +177,11 @@ const TableList: React.FC<{}> = () => {
           }
         }}
         onCancel={() => {
-          setEditUserId(undefined);
+          setEditId(undefined);
           setEditModalVisible(false);
         }}
         modalVisible={editModalVisible}
-        id={editUserId}
-      />
-      <EditRoleForm
-        onSubmit={async (value) => {
-          const success = await handleEditRole(value, editRoleWithUserId);
-          if (success) {
-            setEditRoleWithUserId(undefined);
-            setEditRoleModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-          }
-        }}
-        onCancel={() => {
-          setEditRoleWithUserId(undefined);
-          setEditRoleModalVisible(false);
-        }}
-        modalVisible={editRoleModalVisible}
-        userId={editRoleWithUserId}
+        id={editId}
       />
     </PageHeaderWrapper>
   );

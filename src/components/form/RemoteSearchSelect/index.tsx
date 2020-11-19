@@ -2,27 +2,36 @@ import { Select, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { getList, getOne } from './service';
 
-interface RemoteSelectState {
+interface RemoteSearchSelectState {
   data: any[];
   value?: any;
   fetching: boolean;
 }
 
-interface RemoteSelectProps {
+interface RemoteSearchSelectProps {
+  organizationId?: number;
   placeholder?: string;
   type: string;
   value?: any;
+  disabled?: boolean;
   onChange?: (fields?: any) => void;
 }
 
-const RemoteSelect: React.FC<RemoteSelectProps> = ({ type, placeholder, value, onChange }) => {
-  const [state, setState] = useState<RemoteSelectState>({
+const RemoteSearchSelect: React.FC<RemoteSearchSelectProps> = ({
+  organizationId,
+  type,
+  placeholder,
+  value,
+  onChange,
+  disabled,
+}) => {
+  const [state, setState] = useState<RemoteSearchSelectState>({
     data: [],
     value: '',
     fetching: false,
   });
 
-  const handleChange = (v: any) => {
+  const handleChange = (v: number) => {
     setState({
       ...state,
       value: v,
@@ -38,7 +47,7 @@ const RemoteSelect: React.FC<RemoteSelectProps> = ({ type, placeholder, value, o
       data: [],
       fetching: true,
     });
-    const result = await getList(type, v);
+    const result = await getList(type, v, organizationId);
     if (result.status === 'ok') {
       setState({
         ...state,
@@ -79,8 +88,6 @@ const RemoteSelect: React.FC<RemoteSelectProps> = ({ type, placeholder, value, o
   useEffect(() => {
     if (value) {
       initRes(value);
-    } else {
-      fetchRes('');
     }
   }, [value]);
 
@@ -94,6 +101,7 @@ const RemoteSelect: React.FC<RemoteSelectProps> = ({ type, placeholder, value, o
       onSearch={fetchRes}
       onChange={handleChange}
       style={{ width: '100%' }}
+      disabled={disabled}
     >
       <Select.Option key="" value="">
         无
@@ -107,4 +115,4 @@ const RemoteSelect: React.FC<RemoteSelectProps> = ({ type, placeholder, value, o
   );
 };
 
-export default RemoteSelect;
+export default RemoteSearchSelect;

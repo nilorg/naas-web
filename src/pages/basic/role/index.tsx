@@ -87,6 +87,10 @@ const TableList: React.FC<{}> = () => {
       title: '上级角色',
       dataIndex: ['parent_role', 'name'],
     },
+    {
+      title: '组织',
+      dataIndex: ['organization', 'name'],
+    },
   ];
 
   return (
