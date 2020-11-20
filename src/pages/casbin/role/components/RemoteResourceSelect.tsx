@@ -1,33 +1,27 @@
 import { Select, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { getList, getOne } from './service';
+import { getOrganizationResourceList } from './service';
 
-interface RemoteSearchSelectState {
+interface RemoteResourceSelectState {
   data: any[];
   value?: any;
   fetching: boolean;
 }
 
-interface RemoteSearchSelectProps {
+interface RemoteResourceSelectProps {
   organizationId?: number;
   placeholder?: string;
-  type: string;
-  value?: any;
   disabled?: boolean;
   onChange?: (fields?: any) => void;
-  noData: any;
 }
 
-const RemoteSearchSelect: React.FC<RemoteSearchSelectProps> = ({
+const RemoteResourceSelect: React.FC<RemoteResourceSelectProps> = ({
   organizationId,
-  type,
   placeholder,
-  value,
   onChange,
   disabled,
-  noData,
 }) => {
-  const [state, setState] = useState<RemoteSearchSelectState>({
+  const [state, setState] = useState<RemoteResourceSelectState>({
     data: [],
     value: undefined,
     fetching: false,
@@ -43,13 +37,16 @@ const RemoteSearchSelect: React.FC<RemoteSearchSelectProps> = ({
     }
   };
 
-  const fetchRes = async (v: any) => {
+  const fetchRes = async () => {
     setState({
       ...state,
+      value: undefined,
       data: [],
-      fetching: true,
     });
-    const result = await getList(type, v, organizationId);
+    if (!organizationId) {
+      return;
+    }
+    const result = await getOrganizationResourceList(organizationId);
     if (result.status === 'ok') {
       setState({
         ...state,
@@ -65,49 +62,20 @@ const RemoteSearchSelect: React.FC<RemoteSearchSelectProps> = ({
     }
   };
 
-  const initRes = async (v: any) => {
-    setState({
-      ...state,
-      data: [],
-      fetching: true,
-    });
-    const result = await getOne(type, v);
-    if (result.status === 'ok') {
-      setState({
-        value: v,
-        data: [result.data] || [],
-        fetching: false,
-      });
-    } else {
-      setState({
-        ...state,
-        data: [],
-        fetching: false,
-      });
-    }
-  };
-
   useEffect(() => {
-    if (value) {
-      initRes(value);
-    }
-  }, [value]);
+    fetchRes().then();
+  }, [organizationId]);
 
   return (
     <Select
-      showSearch
       value={state.value}
       placeholder={placeholder}
       notFoundContent={state.fetching ? <Spin size="small" /> : null}
       filterOption={false}
-      onSearch={fetchRes}
       onChange={handleChange}
       style={{ width: '100%' }}
       disabled={disabled}
     >
-      <Select.Option key="" value={noData}>
-        无
-      </Select.Option>
       {state.data.map((d: any) => (
         <Select.Option key={d.value} value={d.value}>
           {d.label}
@@ -117,4 +85,4 @@ const RemoteSearchSelect: React.FC<RemoteSearchSelectProps> = ({
   );
 };
 
-export default RemoteSearchSelect;
+export default RemoteResourceSelect;

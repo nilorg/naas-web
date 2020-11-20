@@ -1,11 +1,5 @@
-import request from 'umi-request';
+import request from '@/utils/request';
 
-export async function queryCurrent() {
-  return request('/api/currentUser');
-}
-
-export async function queryFakeList(params: { count: number }) {
-  return request('/api/fake_list', {
-    params,
-  });
+export async function queryRoleResourceWebRoute(roleCode: string, resourceServerId: number) {
+  return request.get(`/casbin/role/${roleCode}/resource/${resourceServerId}/web_routes`);
 }

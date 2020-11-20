@@ -74,7 +74,12 @@ const EditForm: React.FC<EditFormProps> = (props) => {
           name="organization_id"
           rules={[{ required: true, message: '请选择组织', type: 'number' }]}
         >
-          <RemoteSearchSelect type="organization" disabled={!!props.id} placeholder="选择组织" />
+          <RemoteSearchSelect
+            noData={0}
+            type="organization"
+            disabled={!!props.id}
+            placeholder="选择组织"
+          />
         </Form.Item>
         <Form.Item
           label="角色CODE"
@@ -98,7 +103,12 @@ const EditForm: React.FC<EditFormProps> = (props) => {
           name="parent_code"
           rules={[{ required: false, message: '请选择角色', type: 'string' }]}
         >
-          <RemoteSearchSelect organizationId={organizationId} type="role" placeholder="选择角色" />
+          <RemoteSearchSelect
+            noData=""
+            organizationId={organizationId}
+            type="role"
+            placeholder="选择角色"
+          />
         </Form.Item>
       </Form>
     </Modal>
