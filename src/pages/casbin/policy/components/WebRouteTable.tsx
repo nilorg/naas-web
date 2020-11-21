@@ -6,12 +6,14 @@ interface WebRouteTableProps {
   actionRef: React.MutableRefObject<ActionType | undefined> | ((actionRef: ActionType) => void);
   resourceServerId: number;
   defaultSelectedRowKeys: string[];
+  onChange?: (selectedRowKeys: string[]) => void;
 }
 
 const WebRouteTable: React.FC<WebRouteTableProps> = ({
   actionRef,
   resourceServerId,
   defaultSelectedRowKeys,
+  onChange,
 }) => {
   const columns: ProColumns<any>[] = [
     {
@@ -35,6 +37,9 @@ const WebRouteTable: React.FC<WebRouteTableProps> = ({
   }, [defaultSelectedRowKeys]);
   const onSelectChange = (keys: any) => {
     setSelectedRowKeys(keys);
+    if (onChange) {
+      onChange(keys);
+    }
   };
   return (
     <ProTable<any>

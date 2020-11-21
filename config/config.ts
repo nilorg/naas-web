@@ -118,22 +118,10 @@ export default defineConfig({
               path: '/casbin',
               routes: [
                 {
-                  name: '租户',
-                  icon: 'ShopOutlined',
-                  path: '/casbin/tenants',
-                  component: './casbin/tenant/index',
-                },
-                {
                   name: '访问策略',
                   icon: 'ShareAltOutlined',
                   path: '/casbin/policys',
                   component: './casbin/policy/index',
-                },
-                {
-                  name: '角色',
-                  icon: 'TeamOutlined',
-                  path: '/casbin/roles',
-                  component: './casbin/role/index',
                 },
               ],
             },
@@ -154,12 +142,12 @@ export default defineConfig({
                   path: '/resource/web_routes',
                   component: './resource/route/index',
                 },
-                {
-                  name: 'WEB-菜单',
-                  icon: 'table',
-                  path: '/resource/web_menus',
-                  component: './resource/menu/index',
-                },
+                // {
+                //   name: 'WEB-菜单',
+                //   icon: 'table',
+                //   path: '/resource/web_menus',
+                //   component: './resource/menu/index',
+                // },
               ],
             },
             {
