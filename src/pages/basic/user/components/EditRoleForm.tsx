@@ -116,7 +116,7 @@ const EditRoleForm: React.FC<EditRoleFormProps> = (props) => {
         <Form.Item
           label="角色"
           name="roles"
-          rules={[{ required: true, message: '请选择角色', type: 'array' }]}
+          rules={[{ required: false, message: '请选择角色', type: 'array' }]}
         >
           <RemoteRoleTree organizationId={organizationId} />
         </Form.Item>
