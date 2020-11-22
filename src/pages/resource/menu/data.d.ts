@@ -1,10 +1,3 @@
-export interface TableListItem {
-  id: string;
-  name: string;
-  expr: string;
-  description: string;
-}
-
 export interface TableListPagination {
   total: number;
   pageSize: number;
@@ -12,7 +5,7 @@ export interface TableListPagination {
 }
 
 export interface TableListData {
-  list: TableListItem[];
+  list: any[];
   pagination: Partial<TableListPagination>;
 }
 
@@ -23,7 +16,6 @@ export interface TableListParams {
 
   name?: string;
   code?: string;
-  // parentCode?: string;
   parentName?: string;
   createTime?: string[];
 }

@@ -142,12 +142,12 @@ export default defineConfig({
                   path: '/resource/web_routes',
                   component: './resource/route/index',
                 },
-                // {
-                //   name: 'WEB-菜单',
-                //   icon: 'table',
-                //   path: '/resource/web_menus',
-                //   component: './resource/menu/index',
-                // },
+                {
+                  name: 'WEB-菜单',
+                  icon: 'table',
+                  path: '/resource/web_menus',
+                  component: './resource/menu/index',
+                },
               ],
             },
             {

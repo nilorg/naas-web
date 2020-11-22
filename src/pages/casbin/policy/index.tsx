@@ -6,7 +6,11 @@ import styles from './index.less';
 import OrganizationRole from './components/OrganizationRole';
 import RemoteResourceSelect from './components/RemoteResourceSelect';
 import WebRouteTable from './components/WebRouteTable';
-import { addRoleResourceWebRoute, queryRoleResourceWebRoute } from './service';
+import {
+  addRoleResourceWebMenu,
+  addRoleResourceWebRoute,
+  queryRoleResourceWebRoute,
+} from './service';
 
 const operationTabList = [
   {
@@ -139,15 +143,31 @@ const TableList: React.FC<{}> = () => {
   const apply = async () => {
     const hide = message.loading('正在应用');
     try {
-      if ((roleCode[0] || '') === '' || webRouteSelected.selectedKeys.length === 0) {
+      if (
+        (roleCode[0] || '') === '' ||
+        webRouteSelected.selectedKeys.length === 0 ||
+        tabKey === undefined
+      ) {
         hide();
         message.error(`保存失败:请检查角色和配置资源`);
         return false;
       }
-      const resp = await addRoleResourceWebRoute(roleCode[0], {
-        resource_web_route_ids: webRouteSelected.selectedKeys,
-        resource_server_id: resourceId,
-      });
+      let resp: any;
+      if (tabKey === 'webRoute') {
+        resp = await addRoleResourceWebRoute(roleCode[0], {
+          resource_web_route_ids: webRouteSelected.selectedKeys,
+          resource_server_id: resourceId,
+        });
+      } else if (tabKey === 'webMenu') {
+        resp = await addRoleResourceWebMenu(roleCode[0], {
+          resource_web_menu_ids: webRouteSelected.selectedKeys,
+          resource_server_id: resourceId,
+        });
+      } else if (tabKey === 'webFunction') {
+        hide();
+        message.error('未实现接口！');
+        return false;
+      }
       hide();
       if (resp.status === 'error') {
         message.error(`保存失败:${resp.error}`);

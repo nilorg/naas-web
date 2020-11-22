@@ -5,7 +5,16 @@ export async function queryRoleResourceWebRoute(roleCode: string, resourceServer
 }
 
 export async function addRoleResourceWebRoute(roleCode: string, params: any) {
-  return request(`/casbin/role/${roleCode}/resource_web_route`, {
+  return request(`/casbin/role/${roleCode}/resource_web_routes`, {
+    method: 'PUT',
+    data: {
+      ...params,
+    },
+  });
+}
+
+export async function addRoleResourceWebMenu(roleCode: string, params: any) {
+  return request(`/casbin/role/${roleCode}/resource_web_menus`, {
     method: 'PUT',
     data: {
       ...params,

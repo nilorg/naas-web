@@ -101,7 +101,7 @@ const EditForm: React.FC<EditFormProps> = (props) => {
           name="resource_server_id"
           rules={[{ required: true, message: '请选资源服务器', type: 'number' }]}
         >
-          <RemoteSearchSelect type="resource_server" placeholder="选择资源服务器" />
+          <RemoteSearchSelect noData={0} type="resource_server" placeholder="选择资源服务器" />
         </Form.Item>
       </Form>
     </Modal>
