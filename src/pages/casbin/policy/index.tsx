@@ -9,22 +9,20 @@ import WebRouteTable from './components/WebRouteTable';
 import {
   addRoleResourceWebMenu,
   addRoleResourceWebRoute,
+  queryRoleResourceWebMenu,
   queryRoleResourceWebRoute,
 } from './service';
+import WebMenuTable from './components/WebMenuTable';
 
 const operationTabList = [
   {
     key: 'webRoute',
     tab: <span>Web路由</span>,
   },
-  // {
-  //   key: 'webMenu',
-  //   tab: (
-  //     <span>
-  //       Web菜单
-  //     </span>
-  //   ),
-  // },
+  {
+    key: 'webMenu',
+    tab: <span>Web菜单</span>,
+  },
   // {
   //   key: 'webFunction',
   //   tab: (
@@ -44,8 +42,13 @@ interface WebRouteSelectedState {
   selectedKeys: string[];
 }
 
+interface WebMenuSelectedState {
+  defaultSelectedKeys: string[];
+  selectedKeys: string[];
+}
+
 const TableList: React.FC<{}> = () => {
-  // const actionRefForWebMenuTable = useRef<ActionType>();
+  const actionRefForWebMenuTable = useRef<ActionType>();
   // const actionRefForWebFunctionTable = useRef<ActionType>();
   const actionRefForWebRouteTable = useRef<ActionType>();
   const [tabKey, setTabKey] = useState<RoleState['tabKey']>('webRoute');
@@ -58,9 +61,11 @@ const TableList: React.FC<{}> = () => {
     defaultSelectedKeys: [],
     selectedKeys: [],
   });
-  // const [webRouteSelectedRowKeys, setWebRouteSelectedRowKeys] = useState<string[]>([]);
+  const [webMenuSelected, setWebMenuSelected] = useState<WebMenuSelectedState>({
+    defaultSelectedKeys: [],
+    selectedKeys: [],
+  });
   // const [webFunctionSelectedRowKeys, setWebwebFunctionSelectedRowKeys] = useState<string[]>([]);
-  // const [webMenuSelectedRowKeys, setWebMenuSelectedRowKeys] = useState<string[]>([]);
 
   const onTabChange = (key: string) => {
     setTabKey(key as RoleState['tabKey']);
@@ -68,8 +73,19 @@ const TableList: React.FC<{}> = () => {
 
   const renderChildrenByTabKey = (resourceServerID: number, tKey: RoleState['tabKey']) => {
     if (tKey === 'webMenu') {
-      // return <WebRouteTable defaultSelectedRowKeys={webMenuSelectedRowKeys} actionRef={actionRefForWebMenuTable} resourceServerId={resourceServerID} />;
-      return <h1>webMenu</h1>;
+      return (
+        <WebMenuTable
+          defaultSelectedRowKeys={webMenuSelected.defaultSelectedKeys}
+          actionRef={actionRefForWebMenuTable}
+          resourceServerId={resourceServerID}
+          onChange={(keys: any) => {
+            setWebMenuSelected({
+              ...webMenuSelected,
+              selectedKeys: keys,
+            });
+          }}
+        />
+      );
     }
     if (tKey === 'webFunction') {
       // return <WebRouteTable defaultSelectedRowKeys={webFunctionSelectedRowKeys} actionRef={actionRefForWebFunctionTable} resourceServerId={resourceServerID} />;
@@ -102,7 +118,7 @@ const TableList: React.FC<{}> = () => {
       const data = result.data || [];
       const routes = [];
       for (let i = 0; i < data.length; i += 1) {
-        routes.push(data[i].resource_web_route_id);
+        routes.push(data[i].relation_id);
       }
       setWebRouteSelected({
         ...webRouteSelected,
@@ -116,15 +132,51 @@ const TableList: React.FC<{}> = () => {
     }
   };
 
+  const loadRoleResourceWebMenu = async (role: string, resourceServerId: number) => {
+    if (role === '' || resourceServerId === 0) {
+      return;
+    }
+    const result = await queryRoleResourceWebMenu(role, resourceServerId);
+    if (result.status === 'ok') {
+      const data = result.data || [];
+      const menus = [];
+      for (let i = 0; i < data.length; i += 1) {
+        menus.push(data[i].relation_id);
+      }
+      setWebMenuSelected({
+        ...webRouteSelected,
+        defaultSelectedKeys: menus,
+      });
+    } else {
+      setWebMenuSelected({
+        ...webRouteSelected,
+        defaultSelectedKeys: [],
+      });
+    }
+  };
+
   useEffect(() => {
-    loadRoleResourceWebRoute(roleCode[0] || '', resourceId);
+    if (tabKey === 'webRoute') {
+      loadRoleResourceWebRoute(roleCode[0] || '', resourceId);
+    }
+    if (tabKey === 'webMenu') {
+      loadRoleResourceWebMenu(roleCode[0] || '', resourceId);
+    }
   }, [roleCode]);
 
   useEffect(() => {
-    if (actionRefForWebRouteTable.current) {
-      actionRefForWebRouteTable.current.reload();
+    if (tabKey === 'webRoute') {
+      if (actionRefForWebRouteTable.current) {
+        actionRefForWebRouteTable.current.reload();
+      }
+      loadRoleResourceWebRoute(roleCode[0] || '', resourceId);
     }
-    loadRoleResourceWebRoute(roleCode[0] || '', resourceId);
+    if (tabKey === 'webMenu') {
+      if (actionRefForWebMenuTable.current) {
+        actionRefForWebMenuTable.current.reload();
+      }
+      loadRoleResourceWebMenu(roleCode[0] || '', resourceId);
+    }
   }, [resourceId]);
 
   const onOrganizationRoleChange = (v: any) => {
@@ -145,7 +197,8 @@ const TableList: React.FC<{}> = () => {
     try {
       if (
         (roleCode[0] || '') === '' ||
-        webRouteSelected.selectedKeys.length === 0 ||
+        (tabKey === 'webRoute' && webRouteSelected.selectedKeys.length === 0) ||
+        (tabKey === 'webMenu' && webMenuSelected.selectedKeys.length === 0) ||
         tabKey === undefined
       ) {
         hide();
@@ -160,7 +213,7 @@ const TableList: React.FC<{}> = () => {
         });
       } else if (tabKey === 'webMenu') {
         resp = await addRoleResourceWebMenu(roleCode[0], {
-          resource_web_menu_ids: webRouteSelected.selectedKeys,
+          resource_web_menu_ids: webMenuSelected.selectedKeys,
           resource_server_id: resourceId,
         });
       } else if (tabKey === 'webFunction') {

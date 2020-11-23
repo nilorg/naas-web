@@ -30,3 +30,19 @@ export async function queryResourceWebRoute(resourceServerId: number, params?: a
   });
   return response.toPageResult(result, (i: any) => i);
 }
+
+export async function queryResourceWebMenu(resourceServerId: number, params?: any) {
+  if (resourceServerId === 0) {
+    return {
+      data: [],
+      total: 0,
+      success: true,
+      pageSize: 10,
+      current: 1,
+    };
+  }
+  const result = await request.get(`/casbin/resource/${resourceServerId}/web_menus`, {
+    params,
+  });
+  return response.toPageResult(result, (i: any) => i);
+}

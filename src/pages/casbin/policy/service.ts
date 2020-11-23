@@ -13,6 +13,10 @@ export async function addRoleResourceWebRoute(roleCode: string, params: any) {
   });
 }
 
+export async function queryRoleResourceWebMenu(roleCode: string, resourceServerId: number) {
+  return request.get(`/casbin/role/${roleCode}/resource/${resourceServerId}/web_menus`);
+}
+
 export async function addRoleResourceWebMenu(roleCode: string, params: any) {
   return request(`/casbin/role/${roleCode}/resource_web_menus`, {
     method: 'PUT',
