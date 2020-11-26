@@ -148,6 +148,12 @@ export default defineConfig({
                   path: '/resource/web_menus',
                   component: './resource/menu/index',
                 },
+                {
+                  name: '动作',
+                  icon: 'table',
+                  path: '/resource/actions',
+                  component: './resource/action/index',
+                },
               ],
             },
             {

@@ -38,14 +38,14 @@ const handleEdit = async (fields: any) => {
  */
 const handleRemove = async (action: UseFetchDataAction<RequestData<any>>, selectedRows: any[]) => {
   removeConfirm({
-    name: 'Web菜单',
+    name: '动作',
     count: selectedRows.length,
     onOk: async () => {
       const hide = message.loading('正在删除');
       if (!selectedRows) return true;
       try {
         const result = await remove({
-          ids: selectedRows.map((row) => row.resource_web_menu.id),
+          ids: selectedRows.map((row) => row.resource_action.id),
         });
         hide();
         if (result.status === 'ok') {
@@ -71,35 +71,21 @@ const TableList: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<any>[] = [
     {
+      title: 'CODE',
+      dataIndex: ['resource_action', 'code'],
+    },
+    {
       title: '名称',
-      dataIndex: ['resource_web_menu', 'name'],
+      dataIndex: ['resource_action', 'name'],
     },
     {
-      title: '地址',
-      dataIndex: ['resource_web_menu', 'url'],
+      title: '分组',
+      dataIndex: ['resource_action', 'group'],
       hideInSearch: true,
     },
     {
-      title: 'Icon',
-      dataIndex: ['resource_web_menu', 'icon'],
-      hideInSearch: true,
-    },
-    {
-      title: '是否叶子菜单',
-      dataIndex: ['resource_web_menu', 'leaf'],
-      hideInSearch: true,
-      renderText: (v: any) => {
-        return v ? '是' : '否';
-      },
-    },
-    {
-      title: '深度',
-      dataIndex: ['resource_web_menu', 'level'],
-      hideInSearch: true,
-    },
-    {
-      title: '上级菜单',
-      dataIndex: ['parent_resource_web_menu', 'name'],
+      title: '介绍',
+      dataIndex: ['resource_action', 'description'],
       hideInSearch: true,
     },
     {
@@ -112,7 +98,7 @@ const TableList: React.FC<{}> = () => {
     <PageHeaderWrapper title={false}>
       <ProTable<any>
         actionRef={actionRef}
-        rowKey={(i) => i.resource_web_menu.id}
+        rowKey={(i) => i.resource_action.id}
         onChange={(_, _filter, _sorter) => {
           const sorterResult = _sorter as SorterResult<any>;
           if (sorterResult.field) {
@@ -150,7 +136,7 @@ const TableList: React.FC<{}> = () => {
             <Button
               type="default"
               onClick={() => {
-                setEditId(selectedRows[0].resource_web_menu.id);
+                setEditId(selectedRows[0].resource_action.id);
                 setEditModalVisible(true);
               }}
             >
