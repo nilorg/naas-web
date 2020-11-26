@@ -3,22 +3,22 @@ import response from '@/utils/response';
 import { TableListParams } from './data';
 
 export async function query(params?: TableListParams) {
-  const result = await request.get('/resource/web_routes', {
+  const result = await request.get('/resource/routes', {
     params,
   });
   return response.toPageResult(result, (i: any) => i);
 }
 
 export async function remove(params: { ids: string[] }) {
-  return request.delete(`/resource/web_routes?ids=${params.ids.join(',')}`);
+  return request.delete(`/resource/routes?ids=${params.ids.join(',')}`);
 }
 
 export async function getById(id: string) {
-  return request.get(`/resource/web_routes/${id}`);
+  return request.get(`/resource/routes/${id}`);
 }
 
 export async function edit(params: any) {
-  return request(`/resource/web_routes${params.id ? `/${params.id}` : ''}`, {
+  return request(`/resource/routes${params.id ? `/${params.id}` : ''}`, {
     method: params.id ? 'PUT' : 'POST',
     data: {
       ...params,

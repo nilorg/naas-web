@@ -70,7 +70,7 @@ export default defineConfig({
             },
             {
               name: '基础数据',
-              icon: 'LockOutlined',
+              icon: 'FileOutlined',
               path: '/basic',
               routes: [
                 {
@@ -81,7 +81,7 @@ export default defineConfig({
                 },
                 {
                   name: '角色',
-                  icon: 'UserOutlined',
+                  icon: 'TeamOutlined',
                   path: '/basic/roles',
                   component: './basic/role/index',
                 },
@@ -113,6 +113,37 @@ export default defineConfig({
               ],
             },
             {
+              name: '资源',
+              icon: 'HddOutlined',
+              path: '/resource',
+              routes: [
+                {
+                  name: '资源服务器',
+                  icon: 'DatabaseOutlined',
+                  path: '/resource/servers',
+                  component: './resource/server/index',
+                },
+                {
+                  name: '路由',
+                  icon: 'LinkOutlined',
+                  path: '/resource/routes',
+                  component: './resource/route/index',
+                },
+                {
+                  name: '菜单',
+                  icon: 'BarsOutlined',
+                  path: '/resource/menus',
+                  component: './resource/menu/index',
+                },
+                {
+                  name: '动作',
+                  icon: 'SendOutlined',
+                  path: '/resource/actions',
+                  component: './resource/action/index',
+                },
+              ],
+            },
+            {
               name: 'Casbin',
               icon: 'LockOutlined',
               path: '/casbin',
@@ -122,37 +153,6 @@ export default defineConfig({
                   icon: 'ShareAltOutlined',
                   path: '/casbin/policys',
                   component: './casbin/policy/index',
-                },
-              ],
-            },
-            {
-              name: '资源',
-              icon: 'HddOutlined',
-              path: '/resource',
-              routes: [
-                {
-                  name: '资源服务器',
-                  icon: 'LinkOutlined',
-                  path: '/resource/servers',
-                  component: './resource/server/index',
-                },
-                {
-                  name: 'WEB-路由',
-                  icon: 'LinkOutlined',
-                  path: '/resource/web_routes',
-                  component: './resource/route/index',
-                },
-                {
-                  name: 'WEB-菜单',
-                  icon: 'table',
-                  path: '/resource/web_menus',
-                  component: './resource/menu/index',
-                },
-                {
-                  name: '动作',
-                  icon: 'table',
-                  path: '/resource/actions',
-                  component: './resource/action/index',
                 },
               ],
             },

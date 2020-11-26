@@ -25,7 +25,7 @@ export async function queryResourceWebRoute(resourceServerId: number, params?: a
       current: 1,
     };
   }
-  const result = await request.get(`/casbin/resource/${resourceServerId}/web_routes`, {
+  const result = await request.get(`/casbin/resource/${resourceServerId}/routes`, {
     params,
   });
   return response.toPageResult(result, (i: any) => i);
@@ -41,7 +41,7 @@ export async function queryResourceWebMenu(resourceServerId: number, params?: an
       current: 1,
     };
   }
-  const result = await request.get(`/casbin/resource/${resourceServerId}/web_menus`, {
+  const result = await request.get(`/casbin/resource/${resourceServerId}/menus`, {
     params,
   });
   return response.toPageResult(result, (i: any) => i);

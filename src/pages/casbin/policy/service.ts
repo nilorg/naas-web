@@ -1,11 +1,11 @@
 import request from '@/utils/request';
 
 export async function queryRoleResourceWebRoute(roleCode: string, resourceServerId: number) {
-  return request.get(`/casbin/role/${roleCode}/resource/${resourceServerId}/web_routes`);
+  return request.get(`/casbin/role/${roleCode}/resource/${resourceServerId}/routes`);
 }
 
 export async function addRoleResourceWebRoute(roleCode: string, params: any) {
-  return request(`/casbin/role/${roleCode}/resource_web_routes`, {
+  return request(`/casbin/role/${roleCode}/resource_routes`, {
     method: 'PUT',
     data: {
       ...params,
@@ -14,11 +14,11 @@ export async function addRoleResourceWebRoute(roleCode: string, params: any) {
 }
 
 export async function queryRoleResourceWebMenu(roleCode: string, resourceServerId: number) {
-  return request.get(`/casbin/role/${roleCode}/resource/${resourceServerId}/web_menus`);
+  return request.get(`/casbin/role/${roleCode}/resource/${resourceServerId}/menus`);
 }
 
 export async function addRoleResourceWebMenu(roleCode: string, params: any) {
-  return request(`/casbin/role/${roleCode}/resource_web_menus`, {
+  return request(`/casbin/role/${roleCode}/resource_menus`, {
     method: 'PUT',
     data: {
       ...params,
