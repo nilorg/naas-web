@@ -19,6 +19,7 @@ const WebRouteTable: React.FC<WebRouteTableProps> = ({
     {
       title: '名称',
       dataIndex: 'name',
+      hideInSearch: true,
     },
     {
       title: '方法',
