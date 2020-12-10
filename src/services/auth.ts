@@ -7,6 +7,10 @@ export interface CodeParamsType {
 
 export async function authCode(params: CodeParamsType) {
   return request.get('/auth/token', {
-    params: { ...params, client_id: OAUTH2_CLIENT_ID },
+    params: {
+      ...params,
+      client_id: OAUTH2_CLIENT_ID,
+      grant_type: 'authorization_code',
+    },
   });
 }
