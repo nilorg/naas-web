@@ -182,4 +182,9 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
+  define: {
+    OAUTH2_CLIENT_ID: '1000',
+    OAUTH2_SERVER: 'http://localhost:8080',
+    OAUTH2_CALLBACK: 'http://localhost:8800/auth/callback',
+  }
 });

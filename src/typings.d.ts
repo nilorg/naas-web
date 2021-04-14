@@ -36,3 +36,7 @@ declare let ga: Function;
 declare let ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION: 'site' | undefined;
 
 declare const REACT_APP_ENV: 'test' | 'dev' | 'pre' | false;
+
+declare let OAUTH2_CLIENT_ID;
+declare let OAUTH2_SERVER;
+declare let OAUTH2_CALLBACK;

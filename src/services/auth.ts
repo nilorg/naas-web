@@ -1,5 +1,4 @@
 import request from '@/utils/request';
-import { OAUTH2_CLIENT_ID } from '@/utils/constants';
 
 export interface CodeParamsType {
   code: string;

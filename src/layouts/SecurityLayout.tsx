@@ -4,7 +4,6 @@ import { connect, ConnectProps } from 'umi';
 import { stringify } from 'querystring';
 import { ConnectState } from '@/models/connect';
 import { CurrentUser } from '@/models/user';
-import { OAUTH2_CALLBACK, OAUTH2_CLIENT_ID, OAUTH2_SERVER } from '@/utils/constants';
 
 interface SecurityLayoutProps extends ConnectProps {
   loading?: boolean;

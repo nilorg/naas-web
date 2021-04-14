@@ -3,7 +3,6 @@ import { history } from 'umi';
 import { Alert, Button } from 'antd';
 
 import { authCode } from '@/services/auth';
-import { OAUTH2_CALLBACK, OAUTH2_SERVER, OAUTH2_CLIENT_ID } from '@/utils/constants';
 import { setToken } from '@/utils/token';
 import styles from './style.less';
 
